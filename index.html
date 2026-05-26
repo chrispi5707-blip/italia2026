@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Italia 2026">
+<meta name="theme-color" content="#c4622d">
+<link rel="manifest" href="manifest.json">
+<title>Piazza Family · Italia 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #f5f0e8;
+  --warm-white: #faf8f4;
+  --terracotta: #c4622d;
+  --tc-light: #e8835a;
+  --tc-pale: #f5ddd0;
+  --gold: #b8924a;
+  --gold-light: #d4b07a;
+  --sage: #7a8c6e;
+  --sage-light: #a8b89c;
+  --ink: #1a1510;
+  --ink-mid: #3d3328;
+  --ink-light: #6b5e4e;
+  --stone: #c8bfb0;
+  --stone-light: #e8e2d8;
+  --sky: #4a7c9e;
+  --purple: #7a4a8b;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── INSTALL BANNER ── */
+#install-banner {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+  background: var(--ink);
+  padding: 14px 20px calc(14px + var(--safe-bot));
+  flex-direction: row; align-items: center; justify-content: space-between; gap: 12px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+#install-banner.show { display: flex; }
+#install-banner p { color: var(--cream); font-size: 13px; line-height: 1.4; flex: 1; }
+#install-banner p strong { color: var(--tc-light); }
+#install-btn {
+  background: var(--terracotta); color: white; border: none;
+  padding: 10px 16px; border-radius: 6px; font-size: 13px;
+  font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; white-space: nowrap;
+}
+#install-dismiss {
+  background: none; border: none; color: var(--stone); font-size: 20px; cursor: pointer; padding: 4px;
+}
+
+/* ── OFFLINE BADGE ── */
+#offline-badge {
+  display: none; position: fixed; top: calc(8px + var(--safe-top)); right: 12px; z-index: 998;
+  background: var(--ink-mid); color: var(--cream); font-size: 11px;
+  padding: 4px 10px; border-radius: 20px; font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+#offline-badge.show { display: block; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  padding: calc(var(--safe-top) + 20px) 20px 0;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(150deg, #1a1510 0%, #2d2218 50%, #3d2a1a 80%, rgba(196,98,45,0.15) 100%);
+}
+.hero-pattern {
+  position: absolute; inset: 0; opacity: 0.05;
+  background-image: repeating-linear-gradient(45deg, var(--gold) 0, var(--gold) 1px, transparent 0, transparent 50%);
+  background-size: 18px 18px;
+}
+.hero-content { position: relative; z-index: 2; }
+.hero-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold-light); margin-bottom: 8px;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem; font-weight: 300; color: var(--cream); line-height: 1.1;
+}
+.hero h1 em { font-style: italic; color: var(--tc-light); }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.hero-meta span {
+  font-size: 11px; color: var(--stone);
+  display: flex; align-items: center; gap: 5px;
+}
+.hero-meta span::before {
+  content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--tc-light);
+  flex-shrink: 0;
+}
+
+/* ── COUNTDOWN / WEATHER ROW ── */
+.status-row {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  padding: 16px 0 20px;
+}
+.status-card {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 12px 14px; backdrop-filter: blur(4px);
+}
+.status-card .sc-label {
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gold-light); margin-bottom: 4px;
+}
+.status-card .sc-value {
+  font-size: 15px; font-weight: 500; color: var(--cream); line-height: 1.3;
+}
+.status-card .sc-sub {
+  font-size: 10px; color: var(--stone); margin-top: 2px;
+}
+.weather-icon { font-size: 22px; }
+
+.hero-stripe {
+  height: 3px; margin: 0 -20px;
+  background: linear-gradient(90deg, var(--terracotta), var(--gold), var(--sage));
+}
+
+/* ── TODAY BANNER ── */
+#today-banner {
+  display: none;
+  background: linear-gradient(135deg, var(--terracotta), #a0501f);
+  padding: 10px 20px; font-size: 12px; color: white;
+  text-align: center; font-weight: 500;
+}
+#today-banner.show { display: block; }
+
+/* ── NAV TABS (horizontal scroll) ── */
+.nav-bar {
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--stone-light);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 10px rgba(26,21,16,0.08);
+}
+.nav-scroll {
+  display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 0 12px;
+}
+.nav-scroll::-webkit-scrollbar { display: none; }
+
+.nav-tab {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 14px; cursor: pointer; flex-shrink: 0;
+  border: none; border-bottom: 2.5px solid transparent;
+  background: none; font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s;
+}
+.nav-tab .td { font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 1px; transition: color 0.15s; }
+.nav-tab .tl { font-size: 12px; color: var(--ink-mid); transition: color 0.15s; white-space: nowrap; }
+.nav-tab.today .td::after { content: ' ●'; color: var(--terracotta); }
+.nav-tab.active { border-bottom-color: var(--terracotta); }
+.nav-tab.active .td { color: var(--terracotta); }
+.nav-tab.active .tl { color: var(--ink); font-weight: 500; }
+.nav-tab:active { background: var(--stone-light); }
+
+/* ── MAIN ── */
+.main { padding: 0 0 calc(80px + var(--safe-bot)); }
+
+/* ── DAY PANEL ── */
+.day-panel { display: none; }
+.day-panel.active { display: block; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── DAY HEADER ── */
+.day-header { padding: 20px 20px 0; }
+.day-header-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.day-tag {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  color: white; background: var(--terracotta); padding: 3px 8px; border-radius: 2px; flex-shrink: 0;
+}
+.tag-tuscany { background: var(--sage); }
+.tag-rome { background: var(--sky); }
+.tag-sicily { background: var(--purple); }
+.tag-travel { background: var(--ink-mid); }
+.tag-info { background: var(--gold); }
+.day-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.75rem; font-weight: 300; color: var(--ink); line-height: 1.15;
+}
+.day-sub { font-size: 12px; color: var(--ink-light); margin-top: 4px; font-style: italic; padding: 0 20px; }
+
+/* ── WEATHER STRIP (day-level) ── */
+.day-weather-strip {
+  margin: 12px 20px 0;
+  background: var(--warm-white); border: 1px solid var(--stone-light);
+  border-radius: 8px; overflow: hidden;
+}
+.dws-loading {
+  display: block; padding: 12px 14px;
+  font-size: 12px; color: var(--ink-light);
+}
+.dws-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px 8px;
+}
+.dws-icon { font-size: 28px; flex-shrink: 0; }
+.dws-info { flex: 1; }
+.dws-temp { font-size: 17px; font-weight: 500; color: var(--ink); }
+.dws-desc { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+.dws-precip { font-size: 11px; color: var(--terracotta); margin-top: 2px; font-weight: 500; }
+
+/* Morning / Afternoon / Evening slots */
+.ws-slots {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--stone-light);
+}
+.ws-slot {
+  padding: 8px 6px; text-align: center;
+  border-right: 1px solid var(--stone-light);
+}
+.ws-slot:last-child { border-right: none; }
+.ws-slot-label { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 3px; }
+.ws-slot-icon { font-size: 18px; margin-bottom: 2px; }
+.ws-slot-temp { font-size: 14px; font-weight: 500; color: var(--ink); }
+.ws-precip { font-size: 10px; color: var(--sky); margin-top: 1px; font-weight: 500; }
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--ink-light); padding: 16px 20px 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--stone-light);
+}
+
+/* ── ACTIVITY CARDS ── */
+.card-list { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
+
+.card {
+  background: var(--warm-white); border-radius: 10px;
+  border: 1px solid var(--stone-light); overflow: hidden;
+  box-shadow: 0 1px 4px rgba(26,21,16,0.06);
+  transition: box-shadow 0.2s;
+}
+.card:active { box-shadow: 0 2px 12px rgba(26,21,16,0.12); }
+
+/* type strip left */
+.card-inner { display: flex; }
+.card-strip { width: 4px; flex-shrink: 0; border-radius: 0; }
+.strip-flight { background: var(--sky); }
+.strip-lodging { background: var(--sage); }
+.strip-activity { background: var(--terracotta); }
+.strip-dining { background: var(--gold); }
+.strip-transfer { background: var(--stone); }
+.strip-info { background: var(--ink-light); }
+
+.card-right { flex: 1; min-width: 0; }
+
+/* card header (always visible, tappable) */
+.card-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 14px; cursor: pointer; user-select: none;
+}
+.card-icon { font-size: 22px; flex-shrink: 0; }
+.card-text { flex: 1; min-width: 0; }
+.card-time { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); }
+.card-title { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.3; margin-top: 1px; }
+.card-sub { font-size: 11px; color: var(--ink-light); margin-top: 2px; line-height: 1.4; }
+.card-chevron { font-size: 11px; color: var(--stone); flex-shrink: 0; transition: transform 0.25s; }
+.card.open .card-chevron { transform: rotate(90deg); }
+
+/* card body (expandable) */
+.card-body {
+  display: none; padding: 0 14px 14px 14px;
+  border-top: 1px solid var(--stone-light);
+}
+.card.open .card-body { display: block; animation: fadeUp 0.2s ease; }
+
+/* ── MAP BUTTON ── */
+.map-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--tc-pale); border: 1px solid var(--terracotta);
+  color: var(--terracotta); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  width: 100%; margin-top: 12px; text-decoration: none;
+  transition: background 0.15s;
+}
+.map-btn:active { background: #ecc9b5; }
+.map-btn .map-icon { font-size: 18px; }
+.map-btn .map-text { flex: 1; text-align: left; }
+.map-btn .map-arrow { font-size: 16px; }
+
+/* ── DETAIL GRID ── */
+.detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+}
+.detail-item label {
+  display: block; font-size: 9px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-light); margin-bottom: 2px;
+}
+.detail-item span { font-size: 12px; color: var(--ink-mid); line-height: 1.5; }
+.detail-item a { color: var(--terracotta); }
+.detail-full { grid-column: 1 / -1; }
+
+.card-desc {
+  margin-top: 10px; font-size: 13px; color: var(--ink-mid);
+  line-height: 1.7; font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+}
+
+/* ── TIPS ── */
+.tip {
+  margin-top: 10px; padding: 10px 12px;
+  background: var(--tc-pale); border-left: 3px solid var(--terracotta);
+  border-radius: 0 6px 6px 0; font-size: 12px; color: var(--ink-mid); line-height: 1.6;
+}
+.tip strong { color: var(--terracotta); }
+.tip-blue {
+  background: #eef4f8; border-left-color: var(--sky);
+}
+.tip-blue strong { color: var(--sky); }
+
+/* ── CONFIRMATION BOX ── */
+.conf-box {
+  margin-top: 12px; background: #eef4f8;
+  border: 1px solid #c8dce8; border-radius: 8px; overflow: hidden;
+}
+.conf-box-head {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--sky); padding: 8px 12px; background: #daeaf4;
+}
+.conf-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 12px; border-top: 1px solid #d0e4ef; gap: 8px;
+}
+.conf-row .cn { font-size: 12px; color: var(--ink-light); flex: 1; }
+.conf-row .cc { font-family: monospace; font-weight: 700; color: var(--sky); font-size: 13px; letter-spacing: 0.05em; }
+
+/* ── MENU ── */
+.menu-section { margin-top: 12px; }
+.menu-head {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold); padding-bottom: 6px; border-bottom: 1px solid var(--tc-pale); margin-bottom: 6px;
+}
+.menu-item {
+  display: flex; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--stone-light); font-size: 12.5px; color: var(--ink-mid); line-height: 1.5;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold-light); margin-top: 6px; flex-shrink: 0; }
+
+/* ── OPTIONAL LIST ── */
+.opt-list { margin-top: 8px; }
+.opt-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--stone-light); }
+.opt-item:last-child { border-bottom: none; }
+.opt-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.opt-item h5 { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.opt-item p { font-size: 11.5px; color: var(--ink-light); line-height: 1.5; }
+
+/* ── FLIGHT VISUAL ── */
+.flight-route {
+  display: flex; align-items: center; gap: 10px; margin: 12px 0; background: var(--stone-light);
+  border-radius: 8px; padding: 12px;
+}
+.airport { text-align: center; flex-shrink: 0; }
+.airport .code { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--ink); line-height: 1; }
+.airport .city { font-size: 10px; color: var(--ink-light); margin-top: 2px; }
+.airport .time { font-size: 12px; font-weight: 500; color: var(--terracotta); margin-top: 3px; }
+.fline { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.fline .dur { font-size: 10px; color: var(--ink-light); margin-bottom: 4px; }
+.fline .track { width: 100%; height: 1px; background: var(--stone); position: relative; display: flex; align-items: center; justify-content: center; }
+.fline .plane { position: absolute; font-size: 14px; }
+
+/* ── PHRASE CARDS ── */
+.phrase-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.phrase-item {
+  padding: 10px 12px; background: var(--warm-white); border: 1px solid var(--stone-light);
+  border-radius: 8px; cursor: pointer; transition: background 0.15s;
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
+.phrase-item:active { background: var(--tc-pale); }
+.phrase-left .italian { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 500; color: var(--ink); }
+.phrase-left .phonetic { font-size: 10px; color: var(--gold); font-style: italic; margin-top: 1px; }
+.phrase-left .english { font-size: 11px; color: var(--ink-light); margin-top: 1px; }
+.phrase-copy { font-size: 14px; color: var(--stone); flex-shrink: 0; }
+.phrase-item.copied .phrase-copy { color: var(--sage); }
+
+/* ── CONTACT CARDS ── */
+.contact-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.contact-card {
+  background: var(--warm-white); border: 1px solid var(--stone-light);
+  border-radius: 8px; padding: 12px 14px;
+}
+.contact-card h5 { font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 5px; }
+.contact-card .cname { font-size: 13px; font-weight: 500; color: var(--ink); }
+.contact-card .cphone { font-size: 13px; color: var(--terracotta); margin-top: 3px; font-family: monospace; font-weight: 500; }
+.contact-card .cnote { font-size: 11px; color: var(--ink-light); margin-top: 3px; font-style: italic; }
+
+/* phone tap */
+.contact-card a { color: inherit; text-decoration: none; }
+.cphone a { color: var(--terracotta); }
+
+/* ── EMERGENCY BOX ── */
+.emergency-box {
+  background: #fff3f0; border: 1px solid #f5c0b0; border-radius: 8px; overflow: hidden; margin-top: 8px;
+}
+.emerg-head {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--terracotta); padding: 8px 14px; background: #fde8e0;
+}
+.emerg-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 14px; border-top: 1px solid #f5d5c8;
+}
+.emerg-label { font-size: 12px; color: var(--ink-light); }
+.emerg-num { font-weight: 700; font-size: 14px; color: var(--ink); font-family: monospace; }
+.emerg-num a { color: var(--ink); text-decoration: none; }
+
+/* ── ROSTER TABLE ── */
+.roster { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+.roster th { text-align: left; padding: 6px 8px; background: var(--stone-light); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); }
+.roster td { padding: 7px 8px; border-bottom: 1px solid var(--stone-light); color: var(--ink-mid); }
+.roster tr:last-child td { border-bottom: none; }
+
+/* ── ROOM ASSIGNMENTS ── */
+.room-list { margin-top: 8px; }
+.room-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid var(--stone-light); gap: 8px;
+}
+.room-row:last-child { border-bottom: none; }
+.room-type { font-size: 12px; color: var(--ink-light); flex: 1; }
+.room-who { font-size: 12px; color: var(--ink); font-weight: 500; }
+.room-code { font-family: monospace; font-size: 11px; color: var(--sky); font-weight: 700; }
+
+/* ── SECTION TAG ── */
+.stag {
+  display: inline-block; font-size: 9px; font-weight: 500; letter-spacing: 0.13em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 2px;
+  background: var(--stone-light); color: var(--ink-light); margin-top: 10px; margin-bottom: 6px;
+}
+
+/* ── OFFLINE MAP SECTION ── */
+.map-offline-section {
+  margin-top: 12px; background: var(--warm-white);
+  border: 1px solid var(--stone-light); border-radius: 8px; overflow: hidden;
+}
+.map-offline-head {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  background: var(--stone-light); font-size: 11px; font-weight: 500; color: var(--ink-mid);
+}
+.map-offline-body { padding: 10px 14px; }
+.map-offline-body p { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 10px; }
+.save-steps { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.save-steps li { display: flex; gap: 8px; font-size: 12px; color: var(--ink-mid); align-items: flex-start; }
+.step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--terracotta); color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.map-links { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.map-link-btn {
+  display: flex; align-items: center; gap: 10px; padding: 11px 13px;
+  border: 1px solid var(--stone-light); border-radius: 8px; text-decoration: none;
+  background: var(--warm-white); transition: background 0.15s;
+}
+.map-link-btn:active { background: var(--stone-light); }
+.map-link-btn .mlb-icon { font-size: 22px; flex-shrink: 0; }
+.map-link-btn .mlb-text { flex: 1; }
+.map-link-btn .mlb-title { font-size: 13px; font-weight: 500; color: var(--ink); }
+.map-link-btn .mlb-sub { font-size: 11px; color: var(--ink-light); margin-top: 1px; }
+.map-link-btn .mlb-arrow { color: var(--stone); font-size: 14px; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; margin-top: 8px; }
+.checklist li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--stone-light); cursor: pointer;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-box {
+  width: 20px; height: 20px; border: 2px solid var(--stone); border-radius: 4px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.checklist li.done .check-box { background: var(--sage); border-color: var(--sage); }
+.checklist li.done .check-box::after { content: '✓'; color: white; font-size: 12px; }
+.checklist li.done .check-label { text-decoration: line-through; color: var(--ink-light); }
+.check-label { font-size: 13px; color: var(--ink-mid); }
+
+/* ── WEATHER CARDS STRIP (forecast) ── */
+.forecast-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-top: 10px; scrollbar-width: none; }
+.forecast-strip::-webkit-scrollbar { display: none; }
+.forecast-card {
+  flex-shrink: 0; background: var(--stone-light); border-radius: 6px;
+  padding: 8px 10px; text-align: center; min-width: 52px;
+}
+.fc-day { font-size: 9px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.fc-icon { font-size: 20px; margin-bottom: 3px; }
+.fc-temp { font-size: 12px; font-weight: 500; color: var(--ink); }
+
+/* ── BOTTOM SAFE AREA PAD ── */
+.bottom-pad { height: calc(20px + var(--safe-bot)); }
+
+/* ══════════════════════════════════════════
+   DEEP INFO — expandable rich content layer
+══════════════════════════════════════════ */
+.deep-toggle {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 8px 0 0;
+  border-top: 1px dashed var(--stone-light);
+  background: none; border-left: none; border-right: none; border-bottom: none;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; width: 100%;
+  font-size: 11px; font-weight: 500; color: var(--ink-light);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.deep-toggle .dt-icon { font-size: 14px; }
+.deep-toggle .dt-chevron { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
+.deep-toggle.open .dt-chevron { transform: rotate(90deg); }
+
+.deep-panel {
+  display: none; margin-top: 10px;
+  padding: 14px; background: #f8f5ef;
+  border-radius: 8px; border: 1px solid var(--stone-light);
+}
+.deep-panel.open { display: block; animation: fadeUp 0.2s ease; }
+
+.deep-image {
+  width: 100%; border-radius: 6px; margin-bottom: 10px;
+  object-fit: cover; max-height: 180px;
+  background: var(--stone-light); /* placeholder color */
+}
+.deep-image-credit {
+  font-size: 9px; color: var(--stone); margin-top: -6px; margin-bottom: 10px;
+  text-align: right; font-style: italic;
+}
+.deep-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: var(--ink-mid); line-height: 1.75;
+}
+.deep-text p { margin-bottom: 8px; }
+.deep-text p:last-child { margin-bottom: 0; }
+.deep-facts {
+  margin-top: 10px; display: flex; flex-direction: column; gap: 4px;
+}
+.deep-fact {
+  display: flex; gap: 8px; font-size: 12px; color: var(--ink-mid);
+  padding: 4px 0; border-bottom: 1px solid var(--stone-light);
+}
+.deep-fact:last-child { border-bottom: none; }
+.deep-fact .df-label { color: var(--ink-light); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; min-width: 64px; padding-top: 1px; }
+
+/* ══════════════════════════════════════════
+   PHOTO SPOT NUDGE
+══════════════════════════════════════════ */
+.photo-nudge {
+  margin-top: 10px; padding: 9px 12px;
+  background: linear-gradient(135deg, #1a1510, #3d2a1a);
+  border-radius: 8px; display: flex; align-items: center; gap: 10px;
+}
+.photo-nudge .pn-icon { font-size: 20px; flex-shrink: 0; }
+.photo-nudge .pn-text { font-size: 12px; color: #e8d8c8; line-height: 1.5; }
+.photo-nudge .pn-text strong { color: var(--tc-light); }
+
+/* ══════════════════════════════════════════
+   DIARY / MOMENT CAPTURE
+══════════════════════════════════════════ */
+.diary-section {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px dashed var(--stone-light);
+}
+.diary-head {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.diary-entries { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.diary-entry {
+  background: var(--warm-white); border: 1px solid var(--stone-light);
+  border-radius: 8px; overflow: hidden;
+}
+.diary-entry-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; background: var(--stone-light);
+  font-size: 10px; color: var(--ink-light);
+}
+.diary-entry-header .de-who { font-weight: 500; color: var(--ink-mid); }
+.diary-entry-delete {
+  background: none; border: none; color: var(--stone); font-size: 14px; cursor: pointer; padding: 0 2px;
+}
+.diary-entry-body { padding: 8px 10px; }
+.diary-entry-note { font-size: 13px; color: var(--ink-mid); line-height: 1.5; margin-bottom: 6px; }
+.diary-entry-photo {
+  width: 100%; border-radius: 4px; max-height: 200px; object-fit: cover; display: block;
+}
+
+.diary-add-area { display: flex; flex-direction: column; gap: 8px; }
+.diary-name-row { display: flex; gap: 8px; }
+.diary-input {
+  flex: 1; padding: 9px 12px; border: 1px solid var(--stone-light);
+  border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  background: var(--warm-white); color: var(--ink); outline: none;
+  -webkit-appearance: none;
+}
+.diary-input:focus { border-color: var(--gold); }
+.diary-name-input { width: 110px; flex-shrink: 0; }
+.diary-textarea {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--stone-light);
+  border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  background: var(--warm-white); color: var(--ink); outline: none;
+  resize: none; min-height: 70px; -webkit-appearance: none;
+}
+.diary-textarea:focus { border-color: var(--gold); }
+
+.diary-actions { display: flex; gap: 8px; align-items: center; }
+.diary-photo-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 8px 12px; background: var(--stone-light);
+  border: 1px solid var(--stone); border-radius: 8px;
+  font-size: 12px; color: var(--ink-mid); cursor: pointer;
+  font-family: 'DM Sans', sans-serif; flex-shrink: 0;
+}
+.diary-photo-input { display: none; }
+.diary-save-btn {
+  flex: 1; padding: 9px; background: var(--terracotta); color: white;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+}
+.diary-save-btn:active { background: #a0501f; }
+.diary-photo-preview {
+  display: none; position: relative; margin-top: 4px;
+}
+.diary-photo-preview img {
+  width: 100%; border-radius: 6px; max-height: 140px; object-fit: cover;
+}
+.diary-photo-clear {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%;
+  width: 24px; height: 24px; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ══════════════════════════════════════════
+   DOWNLOAD TRIP BUTTON
+══════════════════════════════════════════ */
+#download-trip-btn {
+  display: none; /* shown via JS once there are diary entries */
+  position: fixed; bottom: calc(16px + var(--safe-bot)); right: 16px; z-index: 200;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 50px; padding: 12px 18px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  display: flex; align-items: center; gap: 8px;
+}
+#download-trip-btn.has-entries { display: flex; }
+
+/* ══════════════════════════════════════════
+   COMPILER BUTTON — subtle, findable if you look
+══════════════════════════════════════════ */
+#compiler-btn {
+  position: fixed; bottom: calc(16px + var(--safe-bot)); left: 16px; z-index: 200;
+  background: none; border: 1px solid var(--stone);
+  border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; opacity: 0.35;
+  transition: opacity 0.2s;
+}
+#compiler-btn:hover, #compiler-btn:active { opacity: 1; }
+
+/* ══════════════════════════════════════════
+   MODAL (compiler / download)
+══════════════════════════════════════════ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(26,21,16,0.7); backdrop-filter: blur(4px);
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--warm-white); border-radius: 16px 16px 0 0;
+  width: 100%; max-width: 600px; padding: 20px 20px calc(20px + var(--safe-bot));
+  max-height: 85vh; overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle {
+  width: 36px; height: 4px; background: var(--stone); border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300;
+  color: var(--ink); margin-bottom: 6px;
+}
+.modal-sub { font-size: 12px; color: var(--ink-light); margin-bottom: 16px; line-height: 1.6; }
+.modal-action-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px; background: var(--terracotta); color: white;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 12px;
+}
+.modal-action-btn.secondary {
+  background: var(--stone-light); color: var(--ink-mid);
+}
+.modal-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 12px; background: none; border: none;
+  font-size: 13px; color: var(--ink-light); cursor: pointer; margin-top: 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+.compiler-drop-zone {
+  border: 2px dashed var(--stone); border-radius: 10px;
+  padding: 30px 20px; text-align: center; margin-top: 12px;
+  cursor: pointer; transition: border-color 0.2s;
+}
+.compiler-drop-zone.drag-over { border-color: var(--terracotta); background: var(--tc-pale); }
+.compiler-drop-zone p { font-size: 13px; color: var(--ink-light); margin-top: 8px; }
+.compiler-files { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.compiler-file {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  background: var(--stone-light); border-radius: 6px; font-size: 12px; color: var(--ink-mid);
+}
+.compiler-file-remove { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--stone); font-size: 16px; }
+.diary-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--stone-light); border-radius: 8px; padding: 10px;
+  text-align: center;
+}
+.stat-card .sv { font-size: 1.4rem; font-weight: 500; color: var(--ink); }
+.stat-card .sl { font-size: 10px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+
+</style>
+</head>
+<body>
+
+<div id="offline-badge">📵 Offline</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Vero Viaggio · May 29 – June 9, 2026</p>
+    <h1>Piazza Family<br><em>Italia 2026</em></h1>
+    <div class="hero-meta">
+      <span>13 Travelers</span>
+      <span>12 Days</span>
+      <span>Tuscany · Rome · Sicily</span>
+    </div>
+    <div class="status-row">
+      <div class="status-card">
+        <div class="sc-label">Trip Status</div>
+        <div class="sc-value" id="countdown-val">—</div>
+        <div class="sc-sub" id="countdown-sub"></div>
+      </div>
+      <div class="status-card">
+        <div class="sc-label">Weather</div>
+        <div class="sc-value" id="hero-weather">Loading…</div>
+        <div class="sc-sub" id="hero-weather-loc"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-stripe"></div>
+</header>
+
+<div id="today-banner"></div>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <div class="nav-scroll">
+    <button class="nav-tab" onclick="showDay('info',this)">
+      <span class="td">ℹ</span><span class="tl">Info</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('may29',this)" data-date="2026-05-29">
+      <span class="td">May 29</span><span class="tl">Depart ✈</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('may30',this)" data-date="2026-05-30">
+      <span class="td">May 30</span><span class="tl">Arrive</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('may31',this)" data-date="2026-05-31">
+      <span class="td">May 31</span><span class="tl">Florence</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun1',this)" data-date="2026-06-01">
+      <span class="td">Jun 1</span><span class="tl">Villa Day</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun2',this)" data-date="2026-06-02">
+      <span class="td">Jun 2</span><span class="tl">Siena + Wine</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun3',this)" data-date="2026-06-03">
+      <span class="td">Jun 3</span><span class="tl">Rome</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun4',this)" data-date="2026-06-04">
+      <span class="td">Jun 4</span><span class="tl">Vatican</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun5',this)" data-date="2026-06-05">
+      <span class="td">Jun 5</span><span class="tl">Sicily ✈</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun6',this)" data-date="2026-06-06">
+      <span class="td">Jun 6</span><span class="tl">Palermo</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun7',this)" data-date="2026-06-07">
+      <span class="td">Jun 7</span><span class="tl">Countryside</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun8',this)" data-date="2026-06-08">
+      <span class="td">Jun 8</span><span class="tl">Resort Day</span>
+    </button>
+    <button class="nav-tab" onclick="showDay('jun9',this)" data-date="2026-06-09">
+      <span class="td">Jun 9</span><span class="tl">Home ✈</span>
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ════════════════ INFO ════════════════ -->
+<div class="day-panel" id="panel-info">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-info">Trip Info</span></div>
+    <h2 class="day-title">Contacts & Essentials</h2>
+  </div>
+
+  <div class="section-divider">🚨 Emergency</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-activity"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">🚨</div>
+            <div class="card-text">
+              <div class="card-title">Emergency Numbers</div>
+              <div class="card-sub">Save before you leave</div>
+            </div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <div class="emergency-box">
+              <div class="emerg-head">Save These Now</div>
+              <div class="emerg-row"><span class="emerg-label">Italian Emergency</span><span class="emerg-num"><a href="tel:112">112</a></span></div>
+              <div class="emerg-row"><span class="emerg-label">U.S. Embassy Rome</span><span class="emerg-num"><a href="tel:+390815838111">+39 081-583-8111</a></span></div>
+              <div class="emerg-row"><span class="emerg-label">Allianz Insurance</span><span class="emerg-num"><a href="tel:18006541908">1-800-654-1908</a></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">📞 Key Contacts</div>
+  <div class="card-list">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h5>Trip Coordinator</h5>
+        <div class="cname">Jean</div>
+        <div class="cphone"><a href="tel:+16199167247">+1 619 916 7247</a> (WhatsApp)</div>
+        <div class="cphone"><a href="tel:+393516897745">+39 351 6897745</a> (Italy cell)</div>
+        <div class="cnote">In transit Jun 1–2 → contact Ashley</div>
+      </div>
+      <div class="contact-card">
+        <h5>See Italy / Ashley</h5>
+        <div class="cname">Ashley</div>
+        <div class="cphone"><a href="tel:+19312091544">+1 931 209 1544</a> (WhatsApp)</div>
+        <div class="cnote">Contact for activity/driver issues</div>
+      </div>
+      <div class="contact-card">
+        <h5>See Italy Office</h5>
+        <div class="cphone"><a href="tel:+390694804333">+39 06 94804333</a></div>
+        <div class="cnote">8am–6pm Italy time</div>
+        <div class="cphone"><a href="tel:+18582016424">+1 858 201 6424</a></div>
+        <div class="cnote">After hours (6pm–3am Italy)</div>
+      </div>
+      <div class="contact-card">
+        <h5>Tuscany Villa Manager</h5>
+        <div class="cname">Mrs. Sveva Fede</div>
+        <div class="cphone"><a href="tel:+39336693767">+39 336 693767</a></div>
+        <div class="cnote">Via di San Fabiano 24, Arezzo</div>
+      </div>
+      <div class="contact-card">
+        <h5>Hotel Smeraldo · Rome</h5>
+        <div class="cphone"><a href="tel:+390668751929">+39 06 687 5929</a></div>
+        <div class="cnote">Via dei Chiavari 20, Roma</div>
+      </div>
+      <div class="contact-card">
+        <h5>Grand Palladium · Sicily</h5>
+        <div class="cphone"><a href="tel:+390921930011">+39 0921 930011</a></div>
+        <div class="cnote">Viale Himera 7, Campofelice</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">👥 Traveler Roster & Flight Codes</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-flight"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">✈️</div>
+            <div class="card-text">
+              <div class="card-title">All Confirmation Numbers</div>
+              <div class="card-sub">United + ITA · 13 travelers</div>
+            </div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <div class="stag">United (ORD→FCO and FCO→ORD)</div>
+            <div class="conf-box" style="margin-top:6px">
+              <div class="conf-box-head">United Confirmations</div>
+              <div class="conf-row"><span class="cn">Don, Mary, Curtis, MC, Clare, Owen</span><span class="cc">GK5RDP</span></div>
+              <div class="conf-row"><span class="cn">Adam, Kim, William, Hannah</span><span class="cc">GJTYBJ</span></div>
+              <div class="conf-row"><span class="cn">Christopher & Emily Piazza</span><span class="cc">GN5H9H</span></div>
+              <div class="conf-row"><span class="cn">Christopher Salzmann</span><span class="cc">GMD70Z</span></div>
+            </div>
+            <div class="stag" style="margin-top:10px">ITA (Rome→Palermo)</div>
+            <div class="conf-box" style="margin-top:6px">
+              <div class="conf-box-head">ITA Confirmations</div>
+              <div class="conf-row"><span class="cn">All Piazza members + Adam</span><span class="cc">Y6CO9S</span></div>
+              <div class="conf-row"><span class="cn">Salzmann family</span><span class="cc">Y6J9VY</span></div>
+            </div>
+            <div class="tip tip-blue" style="margin-top:10px"><strong>ITA check-in:</strong> Opens 48 hours before flight. Use the <a href="https://www.ita-airways.com" style="color:var(--sky)">ITA website</a>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">🛡️ Travel Insurance</div>
+  <div class="card-list">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h5>Don & Mary · Classic</h5>
+        <div class="cname">Policy E2568879523</div>
+        <div class="cnote">Trip: May 29 – Jun 9 · Deposit: Jan 23</div>
+      </div>
+      <div class="contact-card">
+        <h5>Curtis, MC, Clare, Owen, Adam</h5>
+        <div class="cname">Policy E2568880687</div>
+      </div>
+      <div class="contact-card">
+        <h5>Salzmann Family</h5>
+        <div class="cname">Policy E2568881657</div>
+      </div>
+      <div class="contact-card">
+        <h5>Christopher & Emily Piazza</h5>
+        <div class="cname">Policy E2568882771</div>
+        <div class="cnote">Trip End: Jun 7</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">🗣️ Italian Phrases</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-info"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">🇮🇹</div>
+            <div class="card-text">
+              <div class="card-title">Greetings & Basics</div>
+              <div class="card-sub">Tap any phrase to copy</div>
+            </div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <div class="stag">Greetings</div>
+            <div class="phrase-grid">
+              <div class="phrase-item" onclick="copyPhrase('Buongiorno',this)"><div class="phrase-left"><div class="italian">Buongiorno</div><div class="phonetic">bwohn-JOR-no</div><div class="english">Good morning / Good day</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Buonasera',this)"><div class="phrase-left"><div class="italian">Buonasera</div><div class="phonetic">bwoh-nah-SEH-rah</div><div class="english">Good evening</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Salve',this)"><div class="phrase-left"><div class="italian">Salve</div><div class="phonetic">SAHL-veh</div><div class="english">Polite hello, any time</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Arrivederci',this)"><div class="phrase-left"><div class="italian">Arrivederci</div><div class="phonetic">ah-ree-veh-DEHR-chee</div><div class="english">Goodbye</div></div><div class="phrase-copy">📋</div></div>
+            </div>
+            <div class="stag">Essentials</div>
+            <div class="phrase-grid">
+              <div class="phrase-item" onclick="copyPhrase('Dove è il bagno?',this)"><div class="phrase-left"><div class="italian">Dove è il bagno?</div><div class="phonetic">DOH-veh eel BAHN-yoh</div><div class="english">Where is the bathroom?</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Il conto per favore',this)"><div class="phrase-left"><div class="italian">Il conto per favore</div><div class="phonetic">eel KON-toh</div><div class="english">The check, please</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Quanto costa?',this)"><div class="phrase-left"><div class="italian">Quanto costa?</div><div class="phonetic">KWAHN-toh KOH-stah</div><div class="english">How much?</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Mi scusi',this)"><div class="phrase-left"><div class="italian">Mi scusi</div><div class="phonetic">mee SKOO-zee</div><div class="english">Excuse me</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Non capisco',this)"><div class="phrase-left"><div class="italian">Non capisco</div><div class="phonetic">non kah-PEE-skoh</div><div class="english">I don't understand</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Parla inglese?',this)"><div class="phrase-left"><div class="italian">Parla inglese?</div><div class="phonetic">PAR-lah een-GLEH-zeh</div><div class="english">Do you speak English?</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Posso toccarlo?',this)"><div class="phrase-left"><div class="italian">Posso toccarlo?</div><div class="phonetic">POH-soh tok-KAR-loh</div><div class="english">May I touch it?</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Grazie',this)"><div class="phrase-left"><div class="italian">Grazie / Prego</div><div class="phonetic">GRAH-tsyeh / PREH-goh</div><div class="english">Thank you / You're welcome</div></div><div class="phrase-copy">📋</div></div>
+            </div>
+            <div class="stag">Food Restrictions</div>
+            <div class="phrase-grid">
+              <div class="phrase-item" onclick="copyPhrase('Senza glutine',this)"><div class="phrase-left"><div class="italian">Senza glutine</div><div class="phonetic">SEN-tsah GLOO-tee-neh</div><div class="english">Without gluten</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Senza burro',this)"><div class="phrase-left"><div class="italian">Senza burro</div><div class="phonetic">SEN-tsah BOOR-roh</div><div class="english">Without butter</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Senza pepe',this)"><div class="phrase-left"><div class="italian">Senza pepe</div><div class="phonetic">SEN-tsah PEH-peh</div><div class="english">Without pepper</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Sono celiaco/a',this)"><div class="phrase-left"><div class="italian">Sono celiaco/a</div><div class="phonetic">SOH-no cheh-LEE-ah-koh</div><div class="english">I'm celiac</div></div><div class="phrase-copy">📋</div></div>
+              <div class="phrase-item" onclick="copyPhrase('Senza lattosio',this)"><div class="phrase-left"><div class="italian">Senza lattosio</div><div class="phonetic">SEN-tsah lah-TOH-zyoh</div><div class="english">Without lactose</div></div><div class="phrase-copy">📋</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">👗 Tips & Etiquette</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-info"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">🧳</div>
+            <div class="card-text"><div class="card-title">Dress Code, Tipping & Shops</div></div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <div class="opt-list">
+              <div class="opt-item"><div class="opt-icon">⛪</div><div><h5>Churches</h5><p>Knees and shoulders covered — entry refused otherwise. Carry a light scarf at all times.</p></div></div>
+              <div class="opt-item"><div class="opt-icon">👟</div><div><h5>Footwear</h5><p>Flip flops for beach only. Not for towns, restaurants, or churches.</p></div></div>
+              <div class="opt-item"><div class="opt-icon">🛍️</div><div><h5>Shop Etiquette</h5><p>Always greet on entry (Buongiorno/Buonasera). Say Arrivederci leaving. Don't touch without asking. Browsing without greeting is rude.</p></div></div>
+              <div class="opt-item"><div class="opt-icon">💶</div><div><h5>Tipping</h5><p>Not expected like in the US. Coperto on bill is normal. Large group: 10–20€ cash is generous. Tips cannot go on credit card — cash only.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">📦 Trip Checklist</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-activity"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">✅</div>
+            <div class="card-text"><div class="card-title">Packing Checklist</div><div class="card-sub">Tap to check off — saves to your phone</div></div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <ul class="checklist" id="checklist">
+              <li onclick="toggleCheck(this,'passport')"><div class="check-box"></div><span class="check-label">Passport (valid 6+ months after Jun 9)</span></li>
+              <li onclick="toggleCheck(this,'insurance')"><div class="check-box"></div><span class="check-label">Allianz insurance policy saved / app downloaded</span></li>
+              <li onclick="toggleCheck(this,'flights')"><div class="check-box"></div><span class="check-label">All flight confirmation numbers saved</span></li>
+              <li onclick="toggleCheck(this,'scarves')"><div class="check-box"></div><span class="check-label">Light scarves for churches (everyone)</span></li>
+              <li onclick="toggleCheck(this,'shoes')"><div class="check-box"></div><span class="check-label">Comfortable walking shoes (not flip flops)</span></li>
+              <li onclick="toggleCheck(this,'cash')"><div class="check-box"></div><span class="check-label">Euros cash for tips & small purchases</span></li>
+              <li onclick="toggleCheck(this,'adapter')"><div class="check-box"></div><span class="check-label">European power adapter (Type L)</span></li>
+              <li onclick="toggleCheck(this,'sunscreen')"><div class="check-box"></div><span class="check-label">Sunscreen (especially for Sicily)</span></li>
+              <li onclick="toggleCheck(this,'meds')"><div class="check-box"></div><span class="check-label">Prescriptions + any personal medications</span></li>
+              <li onclick="toggleCheck(this,'photoid')"><div class="check-box"></div><span class="check-label">Photo ID for every person (Pitti Palace etc.)</span></li>
+              <li onclick="toggleCheck(this,'app')"><div class="check-box"></div><span class="check-label">This app saved to phone homescreen (offline!)</span></li>
+              <li onclick="toggleCheck(this,'palladium')"><div class="check-box"></div><span class="check-label">Grand Palladium app downloaded</span></li>
+              <li onclick="toggleCheck(this,'maps')"><div class="check-box"></div><span class="check-label">Google Maps offline areas downloaded</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">🗺️ Offline Maps Guide</div>
+  <div class="card-list">
+    <div class="map-offline-section">
+      <div class="map-offline-head">📵 Download Maps Before You Go</div>
+      <div class="map-offline-body">
+        <p>Google Maps lets you download full offline maps — use them anywhere with no data or WiFi. Do this before you leave home.</p>
+        <ul class="save-steps">
+          <li><div class="step-num">1</div><span>Open Google Maps and search for the area (e.g. "Arezzo Italy")</span></li>
+          <li><div class="step-num">2</div><span>Tap your profile photo → "Offline maps" → "Select your own map"</span></li>
+          <li><div class="step-num">3</div><span>Drag the blue box to cover the area, then tap Download</span></li>
+          <li><div class="step-num">4</div><span>Repeat for each region: Arezzo/Tuscany, Rome, and Palermo/Sicily</span></li>
+        </ul>
+        <div class="stag" style="margin-top:12px">Suggested Downloads</div>
+        <div class="map-links">
+          <a class="map-link-btn" href="https://maps.google.com/?q=Arezzo,Italy" target="_blank">
+            <span class="mlb-icon">🌿</span>
+            <span class="mlb-text"><div class="mlb-title">Tuscany / Arezzo Region</div><div class="mlb-sub">Arezzo, Florence, Siena, Chianti</div></span>
+            <span class="mlb-arrow">→</span>
+          </a>
+          <a class="map-link-btn" href="https://maps.google.com/?q=Rome,Italy" target="_blank">
+            <span class="mlb-icon">🏛️</span>
+            <span class="mlb-text"><div class="mlb-title">Rome</div><div class="mlb-sub">Vatican, Trastevere, Colosseum area</div></span>
+            <span class="mlb-arrow">→</span>
+          </a>
+          <a class="map-link-btn" href="https://maps.google.com/?q=Palermo,Sicily,Italy" target="_blank">
+            <span class="mlb-icon">🌊</span>
+            <span class="mlb-text"><div class="mlb-title">Sicily / Palermo Region</div><div class="mlb-sub">Palermo, Cefalù, Campofelice area</div></span>
+            <span class="mlb-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ MAY 29 ════════════════ -->
+<div class="day-panel" id="panel-may29">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-travel">Travel Day</span></div>
+    <h2 class="day-title">Friday, May 29</h2>
+  </div>
+  <p class="day-sub">Departure from Chicago O'Hare → Rome</p>
+  <div id="weather-may29" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">✈️ Flight</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-strip strip-flight"></div>
+        <div class="card-right">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-icon">✈️</div>
+            <div class="card-text">
+              <div class="card-time">3:45 PM</div>
+              <div class="card-title">United UA970 · ORD → FCO</div>
+              <div class="card-sub">Nonstop · 9h 10m · Terminal 1 · Extra legroom</div>
+            </div>
+            <div class="card-chevron">▶</div>
+          </div>
+          <div class="card-body">
+            <div class="flight-route">
+              <div class="airport"><div class="code">ORD</div><div class="city">Chicago</div><div class="time">3:45 PM</div></div>
+              <div class="fline"><div class="dur">9h 10m · Nonstop</div><div class="track"><div class="plane">✈</div></div></div>
+              <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">7:55 AM+1</div></div>
+            </div>
+            <div class="conf-box">
+              <div class="conf-box-head">Confirmation Numbers</div>
+              <div class="conf-row"><span class="cn">Don, Mary, Curtis, MC, Clare, Owen</span><span class="cc">GK5RDP</span></div>
+              <div class="conf-row"><span class="cn">Adam, Kim, William, Hannah</span><span class="cc">GJTYBJ</span></div>
+              <div class="conf-row"><span class="cn">Christopher & Emily Piazza</span><span class="cc">GN5H9H</span></div>
+              <div class="conf-row"><span class="cn">Christopher Salzmann</span><span class="cc">GMD70Z</span></div>
+            </div>
+            <div class="detail-grid" style="margin-top:10px">
+              <div class="detail-item"><label>Terminal</label><span>1 (ORD)</span></div>
+              <div class="detail-item"><label>Seats</label><span>Extra legroom — see boarding pass</span></div>
+              <div class="detail-item"><label>Includes</label><span>Meals, snacks, drinks</span></div>
+              <div class="detail-item"><label>Bags</label><span>1 checked (50lb) + carry-on + personal</span></div>
+            </div>
+            <div class="tip"><strong>Reminder:</strong> Check in 24 hours before departure.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ MAY 30 ════════════════ -->
+<div class="day-panel" id="panel-may30">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-tuscany">Tuscany</span></div>
+    <h2 class="day-title">Saturday, May 30</h2>
+  </div>
+  <p class="day-sub">Arrive Rome · Transfer to Arezzo · Check in Villalta Villa</p>
+  <div id="weather-may30" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🛬 Arrival</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-flight"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🛬</div>
+          <div class="card-text"><div class="card-time">7:55 AM</div><div class="card-title">Land at FCO · EES Biometric Registration</div><div class="card-sub">Allow 30–45 minutes for passport control</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="tip"><strong>New EU entry system (EES):</strong> Scan passport + facial scan + 4 fingerprints at automated kiosks. This replaces passport stamping. Allow extra time before meeting your driver.</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-transfer"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🚐</div>
+          <div class="card-text"><div class="card-time">After Customs</div><div class="card-title">Private Transfer: FCO → Arezzo Villa</div><div class="card-sub">Look for driver at green NCC column</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Pickup</label><span>Arrivals Hall · Green "NCC / Limo Service Meeting Point 1" column</span></div>
+            <div class="detail-item"><label>See Italy Contact</label><span><a href="tel:+393282605736">+39 328 2605736</a></span></div>
+          </div>
+          <div class="tip">Driver holds a sign with your name near the green NCC column.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Rome+Fiumicino+Airport+FCO" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">FCO Airport Map</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-lodging"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏛️</div>
+          <div class="card-text"><div class="card-time">Check In · May 30 – Jun 3</div><div class="card-title">Villalta — Historic Tuscan Villa</div><div class="card-sub">9 bedrooms · 8 bathrooms · Private pool · Arezzo</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Address</label><span>Via di San Fabiano 24, 52100 Arezzo AR</span></div>
+            <div class="detail-item"><label>Manager</label><span>Mrs. Sveva Fede · <a href="tel:+39336693767">+39 336 693767</a></span></div>
+            <div class="detail-item"><label>Confirmation</label><span>Reference n. 293597</span></div>
+            <div class="detail-item"><label>Check Out</label><span>Jun 3, 2026</span></div>
+          </div>
+          <div class="card-desc">17th-century noble villa on the outskirts of Arezzo with stunning countryside views. Surrounded by woods, vines, and olive trees.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Via+di+San+Fabiano+24+Arezzo+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Get Directions to Villa</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">👨‍🍳</div>
+          <div class="card-text"><div class="card-time">5:00 PM Chef Arrives · 7:30 PM Dinner</div><div class="card-title">Private Chef Dinner at Villa</div><div class="card-sub">3 courses · Wine included</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Chef Contact</label><span><a href="tel:+393338048182">+39 333 8048182</a></span></div>
+            <div class="detail-item"><label>Note</label><span>No black pepper, no butter, no cream</span></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-head">Tonight's Menu</div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Starter:</strong> Cecina (GF chickpea pancake) with burrata + Seasonal Bruschetta (GF/vegetarian)</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Pasta:</strong> Maltagliati with tomato sauce — sausage on the side. 8 regular / 5 GF.</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Main:</strong> Pork loin with Vin Santo sauce, glazed onion, seasonal salad and potatoes · 1 vegetarian tart</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Dessert:</strong> Semolino lemon cake (regular) · GF Tiramisù · Water, Red + White Wine</div></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ MAY 31 ════════════════ -->
+<div class="day-panel" id="panel-may31">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-tuscany">Florence Day Trip</span></div>
+    <h2 class="day-title">Sunday, May 31</h2>
+  </div>
+  <p class="day-sub">Pitti Palace · Via dei Neri Lunch · Leather · Gelato · Duomo · Dinner in Arezzo</p>
+  <div id="weather-may31" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🚐 8:30 AM Van Pickup</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🎨</div>
+          <div class="card-text"><div class="card-time">10:00 AM · 2 hours</div><div class="card-title">Pitti Palace & Boboli Gardens</div><div class="card-sub">Private guided tour · Tickets included</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Guide Phone</label><span><a href="tel:+393927619600">+39 392 7619600</a></span></div>
+            <div class="detail-item"><label>Tickets</label><span>Included</span></div>
+          </div>
+          <div class="tip"><strong>Important:</strong> Photo ID required for entry. Large bags and backpacks NOT permitted. Security check for all guests.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Pitti+Palace+Florence+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Pitti Palace on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🥖</div>
+          <div class="card-text"><div class="card-time">~12:00 PM · 45 min</div><div class="card-title">Lunch · Via dei Neri</div><div class="card-sub">Florence's famous sandwich street near the Uffizi</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">⭐</div><div><h5>La Prosciutteria — #54</h5><p>Ashley's favorite! Sandwiches and cold cuts.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🌾</div><div><h5>Sgrano — #49</h5><p>Gluten-free sandwiches available.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">📱</div><div><h5>All'Antico Vinaio — #65</h5><p>Viral/famous. Lines can be very long.</p></div></div>
+          </div>
+          <a class="map-btn" href="https://maps.google.com/?q=Via+dei+Neri+Florence+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Via dei Neri on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🗺️</div>
+          <div class="card-text"><div class="card-time">1:00 PM</div><div class="card-title">Florence Highlights Tour</div><div class="card-sub">Leather shop · Gelato at Vivoli · Duomo · Ponte Vecchio</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">👜</div><div><h5>Artisan Leather Shop</h5><p>Leather-working demo. Guide helps you shop if you wish.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🍦</div><div><h5>Gelato at Vivoli</h5><p>Via Isola delle Stinche 7r — one of Florence's most famous. <a href="https://maps.google.com/?q=Vivoli+Gelateria+Florence" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">⛪</div><div><h5>Duomo, Baptistery & Ponte Vecchio</h5><p>Exterior highlights of the city's most iconic spots.</p></div></div>
+          </div>
+          <div class="tip"><strong>4:00 PM return:</strong> Meet drivers at Piazza della Repubblica.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Piazza+della+Repubblica+Florence" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Piazza della Repubblica (Pickup)</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🥩</div>
+          <div class="card-text"><div class="card-time">8:00 PM</div><div class="card-title">Dinner · Osteria Porcavacca</div><div class="card-sub">Arezzo · Steakhouse/Pasta · Party of 13</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Address</label><span>Via Garibaldi 150, Arezzo</span></div>
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+390575352676">+39 0575 352676</a></span></div>
+            <div class="detail-item detail-full"><label>Reservation</label><span>Don Piazza · 13 people · Reconfirmed by Ashley 22 APR</span></div>
+          </div>
+          <div class="tip"><strong>Taxi back:</strong> Reserved via Villa Villalta — WhatsApp driver ~20 min before leaving. Jean will add contact info.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Osteria+Porcavacca+Arezzo" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Osteria Porcavacca on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 1 ════════════════ -->
+<div class="day-panel" id="panel-jun1">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-tuscany">Villa Day</span></div>
+    <h2 class="day-title">Monday, June 1</h2>
+  </div>
+  <p class="day-sub">Day at Leisure · Optional Day Trips · Cooking Class with Chef Paola</p>
+  <div id="weather-jun1" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🏊 Morning — Free Time</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🗺️</div>
+          <div class="card-text"><div class="card-title">Optional Day Trips from Arezzo</div><div class="card-sub">Best time: 9 AM – 12:30 PM · Shops close 1–4 PM</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">🏙️</div><div><h5>Arezzo (walk or taxi)</h5><p>Piazza Grande, San Francesco basilica (Piero della Francesca frescoes), Duomo, antique shops, Corso Italia.</p>
+            <a href="https://maps.google.com/?q=Piazza+Grande+Arezzo" target="_blank" style="font-size:11px;color:var(--terracotta)">Map →</a></div></div>
+            <div class="opt-item"><div class="opt-icon">🏔️</div><div><h5>Cortona (~30 min train)</h5><p>Hill town overlooking Valdichiana. Piazza della Repubblica, Santa Margherita, views, boutiques.
+            <a href="https://maps.google.com/?q=Cortona+Italy" target="_blank" style="font-size:11px;color:var(--terracotta)"> Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">⛩️</div><div><h5>Anghiari (~35 min train)</h5><p>Quiet medieval town. Piazza Mameli, artisan shops, optional Battle of Anghiari museum.
+            <a href="https://maps.google.com/?q=Anghiari+Arezzo+Italy" target="_blank" style="font-size:11px;color:var(--terracotta)"> Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">🔄</div><div><h5>Lucignano (~30 min train)</h5><p>Unique circular hill town. Very compact, minimal tourism, easy walk-around.
+            <a href="https://maps.google.com/?q=Lucignano+Arezzo+Italy" target="_blank" style="font-size:11px;color:var(--terracotta)"> Map →</a></p></div></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section-divider">👩‍🍳 3:30 PM Chef Paola Arrives · Lesson 5 PM</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🍝</div>
+          <div class="card-text"><div class="card-time">5:00 PM</div><div class="card-title">Private Cooking Class + Dinner</div><div class="card-sub">Chef Paola Paggetti · Tagliatelle, gnocchi, dessert</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Chef</label><span>Paola Paggetti</span></div>
+            <div class="detail-item"><label>Contact</label><span><a href="tel:+393397037870">+39 339 7037870</a></span></div>
+            <div class="detail-item"><label>Drinks</label><span>3 Prosecco · 6 Chianti Gallo Nero · Limoncello</span></div>
+          </div>
+          <div class="tip"><strong>Dress code:</strong> Long hair tied back · Closed-toe shoes · Comfortable clothing. Fair amount of standing.</div>
+          <div class="menu-section">
+            <div class="menu-head">Cooking Class Menu</div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Starter:</strong> Mushroom crostini + Bruschetta with burrata (GF + regular)</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Pasta 1:</strong> Tagliatelle with fresh tomato sauce (8 regular / 5 GF)</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Pasta 2:</strong> Potato gnocchi with arugula-cashew pesto (8 regular / 5 GF)</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Dessert:</strong> GF Apple Cake — eggs, oat milk, sunflower oil, GF flour, sugar, apples</div></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 2 ════════════════ -->
+<div class="day-panel" id="panel-jun2">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-tuscany">Siena + Chianti</span></div>
+    <h2 class="day-title">Tuesday, June 2</h2>
+  </div>
+  <p class="day-sub">Siena Walking Tour · Winery Lunch · Castellina in Chianti</p>
+  <div id="weather-jun2" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🚐 8:30 AM Van Pickup</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏛️</div>
+          <div class="card-text"><div class="card-time">10:00 AM · 2 hours</div><div class="card-title">Guided Walking Tour of Siena</div><div class="card-sub">Highlights + free time</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Guide meets you in Siena for a 2-hour walking tour of the town's highlights, followed by free time to explore.</p>
+          <a class="map-btn" href="https://maps.google.com/?q=Piazza+del+Campo+Siena+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Siena City Center on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🍷</div>
+          <div class="card-text"><div class="card-time">1:00 PM · 2.5 hours</div><div class="card-title">Winery Lunch · Podere La Marronaia</div><div class="card-sub">San Gimignano · 5-wine tasting + 3-course lunch</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Location</label><span>Via Martiri di Citerna 25, San Gimignano SI</span></div>
+            <div class="detail-item"><label>Booked</label><span>See Italy</span></div>
+          </div>
+          <p class="card-desc">Terrace welcome → cellar tour → tasting of 5 wines + olive oil + balsamic → 3-course meal. All organic, estate-made products.</p>
+          <div class="tip"><strong>Dietary note:</strong> Restrictions sent ahead — some items may have pepper/butter that cannot be excluded. GF bread available.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Podere+La+Marronaia+San+Gimignano+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Podere La Marronaia on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏰</div>
+          <div class="card-text"><div class="card-time">4:15 PM</div><div class="card-title">Free Time · Castellina in Chianti</div><div class="card-sub">Medieval passageway · Castle Tower · Gelato · Shopping</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">🏚️</div><div><h5>Via delle Volte</h5><p>Underground medieval passageway along city walls — peek out windows to spectacular countryside. <a href="https://maps.app.goo.gl/BdgZpXz7LahR728U7" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">🗼</div><div><h5>Rocca di Castellina (Castle Tower)</h5><p>Incredible Chianti views. Small museum + tower climb. Paid entry. <a href="https://www.museoarcheologicochianti.it" target="_blank" style="color:var(--terracotta)">Info →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">🍦</div><div><h5>Gelataria in Paese</h5><p><a href="https://maps.app.goo.gl/hxnTqdh1oRcGNn9q8" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">🛍️</div><div><h5>Via Feruccio Shopping</h5><p>Main street. Shops stay open in the afternoon. <a href="https://maps.app.goo.gl/9Kwkokz372X5Wobc8" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+          </div>
+          <div class="tip"><strong>5:15 PM:</strong> Meet drivers to return to the Villa.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Castellina+in+Chianti+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Castellina in Chianti on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 3 ════════════════ -->
+<div class="day-panel" id="panel-jun3">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-rome">Rome</span></div>
+    <h2 class="day-title">Wednesday, June 3</h2>
+  </div>
+  <p class="day-sub">Villa Checkout · Drive to Rome · Golf Cart Tour · Dinner</p>
+  <div id="weather-jun3" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🚐 10:00 AM Checkout & Drive (~3 hrs)</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-lodging"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏨</div>
+          <div class="card-text"><div class="card-time">Check In · Jun 3–5</div><div class="card-title">Hotel Smeraldo · Rome</div><div class="card-sub">6 rooms · Breakfast + WiFi · Via dei Chiavari 20</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+390668751929">+39 06 687 5929</a></span></div>
+            <div class="detail-item"><label>Confirmation</label><span>CRM_24724214 (Don's name + Visa)</span></div>
+            <div class="detail-item"><label>Deposit</label><span>€1,860 paid · Remainder at check-in</span></div>
+            <div class="detail-item"><label>City Tax</label><span>€6.00/person/day (extra)</span></div>
+          </div>
+          <div class="stag">Room Assignments</div>
+          <div class="room-list">
+            <div class="room-row"><span class="room-type">Superior Queen #1</span><span class="room-who">Don / Mary</span></div>
+            <div class="room-row"><span class="room-type">Superior Queen #2</span><span class="room-who">Curtis / Mary C</span></div>
+            <div class="room-row"><span class="room-type">Superior Twin #3</span><span class="room-who">Clare / Hannah</span></div>
+            <div class="room-row"><span class="room-type">Superior + Rollaway #4</span><span class="room-who">Owen / Adam / William</span></div>
+            <div class="room-row"><span class="room-type">Small Queen #5</span><span class="room-who">Christopher / Emily (Piazza)</span></div>
+            <div class="room-row"><span class="room-type">Small Queen #6</span><span class="room-who">Christopher / Kimberly (Salzmann)</span></div>
+          </div>
+          <div class="tip"><strong>Nearby:</strong> Antico Forno Roscioli across the street (Via dei Chiavari 34) — Ashley's top pick for Roman pizza by the slice. Also look for Fatamorgana gelato — unique flavors, natural ingredients.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Hotel+Smeraldo+Via+dei+Chiavari+20+Rome" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Hotel Smeraldo on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🛺</div>
+          <div class="card-text"><div class="card-time">3:30 PM · 3 hours</div><div class="card-title">Rome Golf Cart Tour</div><div class="card-sub">Colosseum · Pantheon · Trevi · Navona · Spanish Steps</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Eco-friendly open-air golf cart through Rome's highlights. Pantheon interior tickets included. Security check at Pantheon — no large bags.</p>
+          <div class="tip"><strong>Dress code at Pantheon:</strong> Covered shoulders required.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Pantheon+Rome+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Pantheon on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🍝</div>
+          <div class="card-text"><div class="card-time">8:00 PM</div><div class="card-title">Dinner · Mimi e Coco</div><div class="card-sub">Via Arenula 20 · Roman · Party of 13 · Donald Piazza</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Address</label><span>Via Arenula 20, Rome</span></div>
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+390645475740">+39 06 4547 5740</a></span></div>
+          </div>
+          <div class="tip"><strong>⚠️ Note:</strong> 3 Mimi e Coco locations in Rome. Your reservation is at <strong>Via Arenula 20</strong> specifically.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Mimi+e+Coco+Via+Arenula+20+Rome" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Mimi e Coco (Via Arenula) on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 4 ════════════════ -->
+<div class="day-panel" id="panel-jun4">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-rome">Vatican Day</span></div>
+    <h2 class="day-title">Thursday, June 4</h2>
+  </div>
+  <p class="day-sub">Free Morning · Vatican Tour · Il Tulipano Nero Dinner · Check in for Sicily flight!</p>
+  <div id="weather-jun4" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🌅 Morning — Free Time in Rome</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🚶</div>
+          <div class="card-text"><div class="card-title">Morning Suggestions in Rome</div><div class="card-sub">Trastevere · Spanish Steps · Via Margutta</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">🍷</div><div><h5>Trastevere</h5><p>Near the hotel. Quaint trattorias and small piazzas. <a href="https://maps.google.com/?q=Trastevere+Rome" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+            <div class="opt-item"><div class="opt-icon">🗼</div><div><h5>Spanish Steps & Piazza di Popolo</h5><p>Iconic Steps + ancient Egyptian obelisk. Via Margutta nearby for boutique shopping. <a href="https://maps.google.com/?q=Spanish+Steps+Rome" target="_blank" style="color:var(--terracotta)">Map →</a></p></div></div>
+          </div>
+          <div class="tip tip-blue"><strong>🔔 Today's to-do:</strong> Check in for ITA flight to Sicily! Conf: Y6CO9S (Piazza) / Y6J9VY (Salzmann) at <a href="https://www.ita-airways.com" style="color:var(--sky)">ita-airways.com →</a></div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">⛪</div>
+          <div class="card-text"><div class="card-time">1:10 PM Pickup · 1:30 PM Tour Start · 4 hours</div><div class="card-title">Private Vatican, Sistine Chapel & St. Peter's</div><div class="card-sub">Tickets + guide included · Viale Vaticano 99</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Guide Phone</label><span><a href="tel:+39335447837">+39 335 447837</a></span></div>
+            <div class="detail-item"><label>Meeting Point</label><span>Viale Vaticano 99 (in front of TMark Hotel)</span></div>
+            <div class="detail-item"><label>Tickets</label><span>Included</span></div>
+          </div>
+          <div class="tip"><strong>Strict dress code:</strong> Covered shoulders — men AND women. No exceptions. Return: ask guide to help call taxis to Hotel Smeraldo.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Viale+Vaticano+99+Rome+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Vatican Meeting Point on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🌷</div>
+          <div class="card-text"><div class="card-time">7:30 PM</div><div class="card-title">Dinner · Il Tulipano Nero</div><div class="card-sub">Trastevere · Roman + GF options · Mary Piazza</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Address</label><span>Via Roma Libera 15, 00153 Roma</span></div>
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+390687775370">+39 06 8777 5370</a></span></div>
+            <div class="detail-item detail-full"><label>Reservation</label><span>Mary Piazza · 13 people · Confirmed via The Fork · reconfirmed by restaurant 24-May</span></div>
+          </div>
+          <a class="map-btn" href="https://maps.google.com/?q=Il+Tulipano+Nero+Via+Roma+Libera+15+Rome" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Il Tulipano Nero on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 5 ════════════════ -->
+<div class="day-panel" id="panel-jun5">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-sicily">Fly to Sicily</span></div>
+    <h2 class="day-title">Friday, June 5</h2>
+  </div>
+  <p class="day-sub">FCO → Palermo · Check In Grand Palladium All-Inclusive</p>
+  <div id="weather-jun5" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🚐 9:30 AM Transfer to FCO</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-flight"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">✈️</div>
+          <div class="card-text"><div class="card-time">12:30 PM</div><div class="card-title">ITA AZ1799 · FCO → PMO (Nonstop)</div><div class="card-sub">1h 10m · Terminal 1 · No assigned seats</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="flight-route">
+            <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">12:30 PM</div></div>
+            <div class="fline"><div class="dur">1h 10m · Nonstop</div><div class="track"><div class="plane">✈</div></div></div>
+            <div class="airport"><div class="code">PMO</div><div class="city">Palermo</div><div class="time">1:40 PM</div></div>
+          </div>
+          <div class="conf-box" style="margin-top:10px">
+            <div class="conf-box-head">ITA Confirmations</div>
+            <div class="conf-row"><span class="cn">Piazza group + Adam</span><span class="cc">Y6CO9S</span></div>
+            <div class="conf-row"><span class="cn">Salzmann family</span><span class="cc">Y6J9VY</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-lodging"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🌊</div>
+          <div class="card-text"><div class="card-time">Check In · Jun 5–9</div><div class="card-title">Grand Palladium Sicilia — All-Inclusive</div><div class="card-sub">6 rooms · Pools, beach, 4 restaurants</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+390921930011">+39 0921 930011</a></span></div>
+            <div class="detail-item"><label>Address</label><span>Viale Himera 7, Campofelice di Roccella PA</span></div>
+            <div class="detail-item detail-full"><label>⚠️ Balance Due</label><span>Only small deposit paid — balance due at check-in. See attached pricing doc.</span></div>
+          </div>
+          <div class="stag">Room Confirmations</div>
+          <div class="room-list">
+            <div class="room-row"><span class="room-type">48m Suite</span><span class="room-who">Don & Mary</span><span class="room-code">7yt8q3yqh1</span></div>
+            <div class="room-row"><span class="room-type">Deluxe</span><span class="room-who">Curtis & Mary C</span><span class="room-code">7yt8q3yqh1</span></div>
+            <div class="room-row"><span class="room-type">Deluxe</span><span class="room-who">C. & K. Salzmann</span><span class="room-code">7yt8q3yqh1</span></div>
+            <div class="room-row"><span class="room-type">Jr Suite for 3</span><span class="room-who">William, Owen, Adam</span><span class="room-code">d269ggeby1</span></div>
+            <div class="room-row"><span class="room-type">Deluxe</span><span class="room-who">Clare & Hannah</span><span class="room-code">d269ggeby1</span></div>
+            <div class="room-row"><span class="room-type">Deluxe</span><span class="room-who">Chris & Emily Piazza</span><span class="room-code">0fdzfurh32</span></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-head">Restaurants (make reservations at check-in!)</div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>El Dorado</strong> — Steakhouse</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Portofino</strong> — Italian</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Sicania</strong> — International buffet</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div><strong>Chang Thai</strong> — Asian fusion</div></div>
+          </div>
+          <div class="tip"><strong>Book dinners immediately at check-in.</strong> Same-day walk-ins may not be accepted. Use the Grand Palladium app or front desk.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Grand+Palladium+Sicilia+Campofelice+di+Roccella" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Grand Palladium on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 6 ════════════════ -->
+<div class="day-panel" id="panel-jun6">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-sicily">Palermo Day Trip</span></div>
+    <h2 class="day-title">Saturday, June 6</h2>
+  </div>
+  <p class="day-sub">Full Day · Palazzo dei Normanni · Guided Tour · Lunch · Free Time</p>
+  <div id="weather-jun6" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🚐 8:30 AM Resort Lobby — Be Ready!</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏰</div>
+          <div class="card-text"><div class="card-time">~9:00 AM · Self-Guided with Audio</div><div class="card-title">Palazzo dei Normanni</div><div class="card-sub">Pre-purchased tickets · Cappella Palatina · Royal Rooms</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">🎫</div><div><h5>Tickets are pre-purchased</h5><p>Find the pre-purchased ticket line. Audio/video guides from the bookshop cash register — leave one ID in exchange.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">⭐</div><div><h5>Suggested Route</h5><p><strong>Skip</strong> ground floor Monet exhibit → go straight to <strong>Cappella Palatina (1st floor)</strong> — the main attraction, a stunning Byzantine chapel → 2nd floor Palace rooms → garden/coffee → bookshop to return guide + retrieve ID.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🚻</div><div><h5>Practical</h5><p>Bathroom after security (€1). Return audio guides at bookshop before leaving.</p></div></div>
+          </div>
+          <a class="map-btn" href="https://maps.google.com/?q=Palazzo+dei+Normanni+Palermo+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Palazzo dei Normanni on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🗺️</div>
+          <div class="card-text"><div class="card-time">11:00 AM · Meet at palace exit</div><div class="card-title">Palermo Walking Tour with Guide</div><div class="card-sub">Cassaro · Duomo · Four Corners · Vucciria Market</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Via Cassaro (main street), Duomo exterior, Four Corners octagonal square, Piazza Pretoria "Fountain of Shame", Piazza Bellini's Arab-Norman churches (Santa Caterina + La Martorana), and the legendary Vucciria Market — with street food tastings included.</p>
+          <a class="map-btn" href="https://maps.google.com/?q=Quattro+Canti+Palermo+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Four Corners (Quattro Canti)</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🍋</div>
+          <div class="card-text"><div class="card-time">1:30 PM</div><div class="card-title">Lunch · Tara Bottega & Cucina</div><div class="card-sub">Via Maqueda 204 · Res. #279024796058 · Jean Rivaldi</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Address</label><span>Via Maqueda 204, Palermo</span></div>
+            <div class="detail-item"><label>Reservation</label><span>#279024796058</span></div>
+          </div>
+          <div class="tip"><strong>After lunch:</strong> Free time in Palermo. Make your way to <strong>Teatro Massimo</strong> (Piazza Giuseppe Verdi) by 4:00 PM to meet drivers. Arrive early — the famous Godfather opera house steps are worth seeing!</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Tara+Bottega+e+Cucina+Via+Maqueda+Palermo" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Tara Restaurant on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-transfer"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🚐</div>
+          <div class="card-text"><div class="card-time">4:00 PM Pickup</div><div class="card-title">Return to Resort · Teatro Massimo</div><div class="card-sub">Piazza Giuseppe Verdi — The Opera House</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <a class="map-btn" href="https://maps.google.com/?q=Teatro+Massimo+Palermo+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Teatro Massimo on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 7 ════════════════ -->
+<div class="day-panel" id="panel-jun7">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-sicily">Sicilian Countryside</span></div>
+    <h2 class="day-title">Sunday, June 7</h2>
+  </div>
+  <p class="day-sub">⚠️ Chris & Emily depart 4:10 AM · Farm Experience · Burgio Village</p>
+  <div id="weather-jun7" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">⚠️ 4:10 AM — Chris & Emily Early Departure</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-flight"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">⚠️</div>
+          <div class="card-text"><div class="card-time">4:10 AM Driver · 7:20 AM PMO → FCO · 9:45 AM FCO → ORD</div><div class="card-title">Chris & Emily Piazza — Fly Home</div><div class="card-sub">Conf. GN5H9H · Seats 33D/33E on FCO→ORD</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="flight-route">
+            <div class="airport"><div class="code">PMO</div><div class="city">Palermo</div><div class="time">7:20 AM</div></div>
+            <div class="fline"><div class="dur">1h 10m</div><div class="track"><div class="plane">✈</div></div></div>
+            <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">8:30 AM</div></div>
+          </div>
+          <div class="flight-route" style="margin-top:8px">
+            <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">9:45 AM</div></div>
+            <div class="fline"><div class="dur">10h 30m</div><div class="track"><div class="plane">✈</div></div></div>
+            <div class="airport"><div class="code">ORD</div><div class="city">Chicago</div><div class="time">1:15 PM</div></div>
+          </div>
+          <div class="tip"><strong>⚠️ Set multiple alarms!</strong> Driver at resort lobby at 4:10 AM. Grand Palladium room reserved through Sunday only.</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section-divider">🌿 9:00 AM Resort Lobby — Full Day (11 travelers)</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-dining"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🫒</div>
+          <div class="card-text"><div class="card-time">11:30 AM</div><div class="card-title">Olive Farm Experience · Colletti Azienda Agricola</div><div class="card-sub">Caltabellotta · Tasting + Farm Lunch</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Location</label><span>Via Piave 6, Caltabellotta</span></div>
+            <div class="detail-item"><label>Phone</label><span><a href="tel:+393207412368">+39 320 7412368</a></span></div>
+            <div class="detail-item"><label>Website</label><span><a href="https://www.collettiaziendagricola.it" target="_blank">collettiaziendagricola.it</a></span></div>
+          </div>
+          <p class="card-desc">Explore vineyards, olive and citrus groves → prepare olive pâté → taste extra virgin olive oil, honey, marmalade, and pâtés → Sicilian specialties with IGP and DOC Sicily wines → local farm lunch.</p>
+          <div class="tip"><strong>Dietary:</strong> Some items may have pepper/butter that can't be excluded. GF bread + crostini available.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Caltabellotta+Sicily+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Caltabellotta on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🔔</div>
+          <div class="card-text"><div class="card-time">~2:30 PM · Return 3:30 PM</div><div class="card-title">Free Time in Burgio</div><div class="card-sub">Arab-Norman mountain village · "City of Bells & Ceramics"</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Founded ~1000 AD on the Sicani Mountains. Name from Arabic "burǧ" (tower). Sicily's only remaining traditional bronze bell foundry is still active here. The 16th-century ceramic tradition continues with unique yellow-and-green majolica.</p>
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">🚶</div><div><h5>"Town of 100 Portals"</h5><p>Wind through Arab-medieval alleys with 100+ carved stone portals and ceramic-decorated balconies. The Rabato quarter wraps around the castle.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">⛪</div><div><h5>Chiesa di San Giuseppe</h5><p>"Sistine Chapel of the Sicani Mountains" — majolica-tiled bell tower + fully frescoed Baroque interior. May be closed in afternoon.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🏰</div><div><h5>Castello di Burgio</h5><p>Walk up to the ruins for panoramic views. Driver likely can't take you to the historic center — you'll walk. Well worth it.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">☕</div><div><h5>Local Coffee Bar</h5><p>If one is open, enter and ask about Piazza relatives. "Old-timers" know local family names. Fun experience even with the language barrier!</p></div></div>
+          </div>
+          <div class="tip"><strong>Note:</strong> Arriving mid-afternoon — the town will be quiet. The best thing to do is walk the streets. Very few if anything will be open.</div>
+          <a class="map-btn" href="https://maps.google.com/?q=Burgio+Agrigento+Sicily+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Burgio on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 8 ════════════════ -->
+<div class="day-panel" id="panel-jun8">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-sicily">Last Full Day</span></div>
+    <h2 class="day-title">Monday, June 8</h2>
+  </div>
+  <p class="day-sub">Rest Day at Resort · Optional: Cefalù or Hikes</p>
+  <div id="weather-jun8" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🏖️ Resort Day</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🌴</div>
+          <div class="card-text"><div class="card-title">Resort Bars & Amenities</div><div class="card-sub">Pools, beach, 5 bars & lounges</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="menu-section">
+            <div class="menu-head">Bars & Lounges</div>
+            <div class="menu-item"><div class="menu-dot"></div><div>Sicilia Lobby Bar</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div>Pool Bar</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div>Beach Bar</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div>Xtra Time Sports Bar</div></div>
+            <div class="menu-item"><div class="menu-dot"></div><div>Two Ways Coffee and Cocktail Bar</div></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-info"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏖️</div>
+          <div class="card-text"><div class="card-time">Optional Half Day</div><div class="card-title">Cefalù Day Trip</div><div class="card-sub">~20 min · UNESCO Norman cathedral + beach</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-item"><label>Get There</label><span>Taxi (15–20 min) OR train from Campofelice (10–15 min, easy)</span></div>
+          </div>
+          <div class="opt-list">
+            <div class="opt-item"><div class="opt-icon">⛪</div><div><h5>Duomo di Cefalù (UNESCO)</h5><p>Norman cathedral in the main piazza. Various ticket options to view complex and climb towers.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🛍️</div><div><h5>Historic Center</h5><p>Corso basso and corso alto. Medieval washhouse (lavatoio medievale). Seafront for walk or lunch.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🏔️</div><div><h5>La Rocca Hike</h5><p>Strenuous. Loose gravel/dirt, minimal shade. Panoramic views. Proper footwear required.</p></div></div>
+            <div class="opt-item"><div class="opt-icon">🍽️</div><div><h5>Restaurants in Cefalù</h5><p>Ristorante La Galleria, il Carretto, Via Roma Vecchia</p></div></div>
+          </div>
+          <a class="map-btn" href="https://maps.google.com/?q=Cefalù+Cathedral+Sicily+Italy" target="_blank">
+            <span class="map-icon">🗺️</span><span class="map-text">Cefalù on Maps</span><span class="map-arrow">→</span>
+          </a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-activity"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🥾</div>
+          <div class="card-text"><div class="card-title">Nearby Hikes (from Komoot)</div><div class="card-sub">4 options near the resort</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="map-links">
+            <a class="map-link-btn" href="https://www.komoot.com/smarttour/36307603" target="_blank"><span class="mlb-icon">🌊</span><span class="mlb-text"><div class="mlb-title">View of the Sea — Campofelice</div></span><span class="mlb-arrow">→</span></a>
+            <a class="map-link-btn" href="https://www.komoot.com/smarttour/36307603" target="_blank"><span class="mlb-icon">🌿</span><span class="mlb-text"><div class="mlb-title">Hiking Loop near Campofelice</div></span><span class="mlb-arrow">→</span></a>
+            <a class="map-link-btn" href="https://www.komoot.com/smarttour/41278243" target="_blank"><span class="mlb-icon">🏔️</span><span class="mlb-text"><div class="mlb-title">Madonie Coast View (Forest Chalet → Rocca del Monaco)</div></span><span class="mlb-arrow">→</span></a>
+            <a class="map-link-btn" href="https://www.komoot.com/smarttour/42379444" target="_blank"><span class="mlb-icon">💧</span><span class="mlb-text"><div class="mlb-title">Water Spring Loop — Casa Pedale</div></span><span class="mlb-arrow">→</span></a>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+<!-- ════════════════ JUN 9 ════════════════ -->
+<div class="day-panel" id="panel-jun9">
+  <div class="day-header">
+    <div class="day-header-row"><span class="day-tag tag-travel">Departure Day</span></div>
+    <h2 class="day-title">Tuesday, June 9</h2>
+  </div>
+  <p class="day-sub">⚠️ Very early — 4:10 AM pickup! PMO → FCO → ORD. Arrivederci, Italia! 🇮🇹</p>
+  <div id="weather-jun9" class="day-weather-strip"><span class="dws-loading">Loading weather…</span></div>
+
+  <div class="section-divider">🌙 4:10 AM — Set Your Alarms!</div>
+  <div class="card-list">
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-transfer"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🌙</div>
+          <div class="card-text"><div class="card-time">4:10 AM</div><div class="card-title">Airport Transfer · Resort → PMO</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="tip"><strong>Set multiple alarms!</strong> Driver is at the resort lobby at 4:10 AM sharp.</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-flight"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">✈️</div>
+          <div class="card-text"><div class="card-time">7:20 AM</div><div class="card-title">ITA/United UA7764 · PMO → FCO</div><div class="card-sub">Operated by ITA · Check in at ITA desk</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="flight-route">
+            <div class="airport"><div class="code">PMO</div><div class="city">Palermo</div><div class="time">7:20 AM</div></div>
+            <div class="fline"><div class="dur">1h 10m</div><div class="track"><div class="plane">✈</div></div></div>
+            <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">8:30 AM</div></div>
+          </div>
+          <div class="tip"><strong>⚠️ ITA Airways desk</strong> — not the United desk. Check in there and drop luggage.</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-strip strip-flight"></div><div class="card-right">
+        <div class="card-head" onclick="toggleCard(this)">
+          <div class="card-icon">🏠</div>
+          <div class="card-text"><div class="card-time">9:45 AM</div><div class="card-title">United UA971 · FCO → ORD — Home!</div><div class="card-sub">10h 30m · Terminal 3 · Extra legroom</div></div>
+          <div class="card-chevron">▶</div>
+        </div>
+        <div class="card-body">
+          <div class="flight-route">
+            <div class="airport"><div class="code">FCO</div><div class="city">Rome</div><div class="time">9:45 AM</div></div>
+            <div class="fline"><div class="dur">10h 30m</div><div class="track"><div class="plane">✈</div></div></div>
+            <div class="airport"><div class="code">ORD</div><div class="city">Chicago</div><div class="time">1:15 PM</div></div>
+          </div>
+          <div class="conf-box" style="margin-top:10px">
+            <div class="conf-box-head">Confirmation Numbers</div>
+            <div class="conf-row"><span class="cn">Don, Mary, Curtis, MC, Clare, Owen</span><span class="cc">GK5RDP</span></div>
+            <div class="conf-row"><span class="cn">Adam, Kim, William, Hannah</span><span class="cc">GJTYBJ</span></div>
+            <div class="conf-row"><span class="cn">Christopher Salzmann</span><span class="cc">GMD70Z</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="bottom-pad"></div>
+</div>
+
+</main>
+
+<!-- DOWNLOAD TRIP BUTTON -->
+<button id="download-trip-btn" onclick="openDownloadModal()">📖 My Trip Book</button>
+
+<!-- COMPILER BUTTON (subtle) -->
+<button id="compiler-btn" onclick="openCompilerModal()" title="Compiler">⚙</button>
+
+<!-- DOWNLOAD MODAL -->
+<div class="modal-overlay" id="download-modal" onclick="closeModal('download-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">My Italia 2026</div>
+    <div class="modal-sub">Your personal trip diary — every moment you captured, organized by day and place. Download as a beautiful memory book that works forever, no app needed.</div>
+    <div class="diary-stats">
+      <div class="stat-card"><div class="sv" id="stat-moments">0</div><div class="sl">Moments</div></div>
+      <div class="stat-card"><div class="sv" id="stat-photos">0</div><div class="sl">Photos</div></div>
+      <div class="stat-card"><div class="sv" id="stat-days">0</div><div class="sl">Days</div></div>
+    </div>
+    <button class="modal-action-btn" onclick="downloadMemoryBook()">⬇️ Download Memory Book</button>
+    <button class="modal-action-btn secondary" onclick="exportDiaryData()">📤 Export Raw Data (for compiler)</button>
+    <button class="modal-close" onclick="closeModal('download-modal')">Close</button>
+  </div>
+</div>
+
+<!-- COMPILER MODAL -->
+<div class="modal-overlay" id="compiler-modal" onclick="closeModal('compiler-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Family Compiler</div>
+    <div class="modal-sub">Load exported diary files from multiple family members to merge them into one combined family memory book.</div>
+    <div class="compiler-drop-zone" id="compiler-drop" onclick="document.getElementById('compiler-file-input').click()">
+      <div style="font-size:32px">📂</div>
+      <p>Tap to load exported diary files<br><span style="font-size:11px;color:var(--stone)">Load one file at a time from each family member</span></p>
+    </div>
+    <input type="file" id="compiler-file-input" accept=".json" style="display:none" onchange="loadCompilerFile(event)">
+    <div class="compiler-files" id="compiler-files"></div>
+    <button class="modal-action-btn" id="compiler-merge-btn" onclick="mergeAndDownload()" style="display:none">✨ Merge & Download Family Book</button>
+    <button class="modal-close" onclick="closeModal('compiler-modal')">Close</button>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  <p><strong>Save for offline use!</strong> Add this to your home screen to access without data in Italy.</p>
+  <button id="install-btn" onclick="installPWA()">Add to Home</button>
+  <button id="install-dismiss" onclick="dismissInstall()">✕</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DEEP INFO DATA — rich content per card
+// ══════════════════════════════════════════
+const DEEP_INFO = {
+  'pitti': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Palazzo_Pitti_Firenze.jpg/640px-Palazzo_Pitti_Firenze.jpg',
+    credit: 'Palazzo Pitti · Wikimedia Commons',
+    text: `The Palazzo Pitti is one of Florence's most grandiose Renaissance palaces, begun in 1458 by Luca Pitti as a show of power against the Medici. The irony: the Medici eventually bought it. Today it houses four museums — the Palatine Gallery, Royal Apartments, Treasury of the Grand Dukes, and the Gallery of Modern Art — all within its staggering 32,000 square meter footprint.
+
+The Boboli Gardens behind it are a masterwork of Italian garden design, begun in 1550. Look for the Grotta Grande near the entrance — it contains original Michelangelo sculptures.`,
+    facts: [
+      ['Built', '1458, expanded through 17th century'],
+      ['Size', 'Largest museum complex in Florence'],
+      ['Don\'t miss', 'Grotta Grande, Ammannati courtyard, rooftop views'],
+      ['Tip', 'Arrive exactly at 10 AM — crowds build fast']
+    ],
+    photoSpot: 'The courtyard fountain and the view back down toward Florence from the upper Boboli terrace.'
+  },
+  'siena': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/cinquantacinque/Siena_Piazza_del_Campo.jpg/640px-Siena_Piazza_del_Campo.jpg',
+    credit: 'Piazza del Campo · Wikimedia Commons',
+    text: `Siena's Piazza del Campo is arguably the most beautiful medieval square in Italy — a scallop-shell shaped piazza sloping toward the Gothic Palazzo Pubblico, built between 1297 and 1310. The square is divided into nine sections representing the Council of Nine who governed Siena during its golden age.
+
+The Torre del Mangia (the tower beside the palace) rises 102 meters — the second tallest medieval tower in Italy. The city's rivalry with Florence defined it for centuries; the Sienese stopped Florentine expansion at the Battle of Montaperti in 1260, then lost catastrophically at Montaperti in 1554.`,
+    facts: [
+      ['The Palio', 'Famous horse race run bare-back twice a year in this piazza'],
+      ['The Tower', 'Torre del Mangia — climb for panoramic Tuscany views (fee)'],
+      ['Duomo', 'One of Italy\'s finest Gothic cathedrals, up the hill from the campo'],
+      ['Tip', 'The campo is free to sit in — do it, order nothing, just soak it in']
+    ],
+    photoSpot: 'Stand at the bottom of the campo looking up toward the Palazzo Pubblico and tower — the nine stone sections radiating outward make a stunning wide shot.'
+  },
+  'winery': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/San_Gimignano_2010_2.jpg/640px-San_Gimignano_2010_2.jpg',
+    credit: 'San Gimignano · Wikimedia Commons',
+    text: `The Chianti wine region between Florence and Siena is one of the oldest designated wine zones in the world — protected by decree since 1282. The Chianti Classico Gallo Nero (Black Rooster) label, which you'll encounter at the winery, comes from the medieval League of Chianti whose emblem was a black rooster.
+
+Vernaccia di San Gimignano, produced near the winery, was the first Italian wine to receive DOC status in 1966. The estate uses only organic methods — the olive oil you'll taste alongside is typically harvested in October by hand and cold-pressed within 24 hours.`,
+    facts: [
+      ['Grape', 'Primarily Sangiovese for Chianti; Vernaccia for whites'],
+      ['Aging', 'Chianti Classico Riserva must age minimum 24 months'],
+      ['Olive oil', 'Tuscany produces some of Italy\'s finest extra virgin'],
+      ['Balsamic', 'True aged balsamic requires 12–25+ years in wood barrels']
+    ],
+    photoSpot: 'The terrace overlooking the vineyard rows with the towers of San Gimignano visible in the distance — ask your host which direction to face for the best shot.'
+  },
+  'castellina': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Castellina_in_Chianti_-_panorama_2.jpg/640px-Castellina_in_Chianti_-_panorama_2.jpg',
+    credit: 'Castellina in Chianti · Wikimedia Commons',
+    text: `Castellina sits on a ridge between the Arbia, Elsa, and Pesa river valleys — a strategic position that made it endlessly contested between Florence and Siena for 200 years. The Rocca (castle) you can climb was rebuilt by the Florentines in 1400 after they captured it from the Sienese.
+
+The Via delle Volte is one of the most unusual streets in Tuscany — an entire covered medieval passageway built inside the town walls, originally used to move troops and supplies without being seen from outside. The windows cut into the outer walls give you a view of nothing but open Chianti countryside.`,
+    facts: [
+      ['Via delle Volte', 'Medieval military passageway built INTO the city walls'],
+      ['The Castle', 'Now houses a small Etruscan/Chianti archaeology museum'],
+      ['Chianti DOCG', 'The wines sold in town shops are among the best values in Italy'],
+      ['Afternoon hours', 'Most shops stay open here — unusual for a Tuscan village']
+    ],
+    photoSpot: 'The window openings along Via delle Volte frame the Chianti hills perfectly — each one is a natural picture frame.'
+  },
+  'golfcart': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/640px-Colosseo_2020.jpg',
+    credit: 'Colosseum · Wikimedia Commons',
+    text: `The Colosseum was completed in 80 AD under Emperor Titus and could hold 50,000–80,000 spectators. Its official name is the Flavian Amphitheatre — "Colosseum" came later, from the colossal statue of Nero that once stood nearby.
+
+The Trevi Fountain was completed in 1762 and is the largest Baroque fountain in Rome at 26 meters high. The tradition of throwing a coin (right hand over left shoulder) to ensure your return to Rome began with the 1954 film Three Coins in the Fountain. About €1.5 million is thrown in annually — collected each night and donated to a Roman charity.
+
+The Pantheon's dome was the world's largest for over 1,300 years until Florence's Duomo surpassed it in 1436. The oculus at its center is 8.7 meters wide and open to the sky — the floor slopes slightly and has drains to handle rain.`,
+    facts: [
+      ['Colosseum', '80 AD · 50,000–80,000 capacity · 100 days of inaugural games'],
+      ['Pantheon', '125 AD · Dome still world-record-holding for 1,300 years'],
+      ['Trevi Fountain', '1762 · ~€1.5 million thrown in annually'],
+      ['Piazza Navona', 'Built over Emperor Domitian\'s stadium (86 AD)']
+    ],
+    photoSpot: 'The Trevi Fountain at dusk when the crowds thin slightly — position on the far left for the best angle. For the Colosseum, the view from across Via Sacra shows the full exterior arch sequence.'
+  },
+  'vatican': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Sistine_Chapel_ceiling_photo_2.jpg/640px-Sistine_Chapel_ceiling_photo_2.jpg',
+    credit: 'Sistine Chapel ceiling · Wikimedia Commons',
+    text: `Michelangelo painted the Sistine Chapel ceiling between 1508 and 1512, lying on scaffolding 20 meters above the floor. He was 33 when he started and had never worked in fresco before at this scale. The nine central scenes from Genesis include the iconic "Creation of Adam" — God's and Adam's fingers nearly touching — which is actually in the middle of the ceiling, not at the center panel as most people assume.
+
+St. Peter's Basilica stands over what is believed to be the tomb of Saint Peter, the first Pope. The current building was commissioned in 1506 — over 120 years of construction across multiple architects including Bramante, Raphael, Michelangelo, and Bernini. Michelangelo's Pietà (1499) was carved when he was just 24 years old. He later denied being its creator — then secretly carved his name on Mary's sash, the only work he ever signed.`,
+    facts: [
+      ['Sistine Chapel', 'Painted 1508–1512 · 343 figures · 465 square meters'],
+      ['St. Peter\'s', '120 years to build · World\'s largest church by interior volume'],
+      ['Pietà', 'Carved 1499 · Michelangelo was 24 · Only work he ever signed'],
+      ['The Dome', 'Michelangelo designed it · You can climb it for views over Rome']
+    ],
+    photoSpot: 'Photography is not allowed inside the Sistine Chapel. In St. Peter\'s, the view looking up into Michelangelo\'s dome from directly below is extraordinary — look for the spot marked on the floor.'
+  },
+  'palazzo': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cappella_Palatina_Palermo.jpg/640px-Cappella_Palatina_Palermo.jpg',
+    credit: 'Cappella Palatina · Wikimedia Commons',
+    text: `The Cappella Palatina inside Palazzo dei Normanni is one of the most extraordinary rooms in Europe — a fusion of Norman architecture, Byzantine mosaic, and Arab craftsmanship that exists nowhere else on Earth. Built between 1132 and 1143 by Roger II, the King of Sicily who ruled over a genuinely multicultural court of Arabs, Greeks, and Normans.
+
+The mosaics covering the walls and ceiling are Byzantine in style but were made by Arab craftsmen — a physical record of the unique Arab-Norman culture that flourished in Sicily for 200 years. The muqarnas ceiling (the honeycomb wooden ceiling above the nave) is Islamic in origin and identical to ceilings found in palaces in Cairo and Baghdad. It is the only such ceiling in a Christian church in the world.`,
+    facts: [
+      ['Built', '1132–1143 by King Roger II of Sicily'],
+      ['The ceiling', 'Only Islamic muqarnas ceiling in any Christian church — worldwide'],
+      ['Mosaics', 'Byzantine style, made by Arab craftsmen — culturally unique'],
+      ['Tip', 'Skip the ground floor Monet exhibit, go straight up to the chapel']
+    ],
+    photoSpot: 'Stand at the back of the chapel and shoot toward the altar — the golden mosaics, muqarnas ceiling, and columns all align. The light through the windows hits the gold tesserae around mid-morning.'
+  },
+  'palermotour': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Mercato_della_Vucciria_Palermo.jpg/640px-Mercato_della_Vucciria_Palermo.jpg',
+    credit: 'Vucciria Market · Wikimedia Commons',
+    text: `The Vucciria is one of Palermo's oldest markets, dating to the Arab period of the city (9th–11th centuries). Its name likely derives from the French "boucherie" (butcher), a remnant of the Norman era that followed. For centuries it was Palermo's primary food market — fish, meat, vegetables, and street food all traded within an ancient quarter of narrow alleys.
+
+The Quattro Canti (Four Corners) marks the intersection of Palermo's two main arteries — the Cassaro (now Corso Vittorio Emanuele, one of Europe's oldest streets) and Via Maqueda, cut in 1600. Each of the four curved baroque facades has three tiers: a fountain, a Spanish king, and a patron saint of Palermo's four historic districts.`,
+    facts: [
+      ['Vucciria', 'One of Europe\'s oldest continuously operating markets'],
+      ['Cassaro', 'Via Vittorio Emanuele — one of Europe\'s oldest streets, Phoenician origin'],
+      ['La Martorana', 'Arab-Norman church (1143) with some of Sicily\'s oldest mosaics'],
+      ['Street food', 'Try arancini, panelle (chickpea fritters), and sfincione (Sicilian pizza)']
+    ],
+    photoSpot: 'The Quattro Canti from the center of the intersection — look straight up for a dramatic shot of the four curved facades converging overhead. The Vucciria market stalls are photogenic from any angle.'
+  },
+  'burgio': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Burgio_Sicily_panorama.jpg/640px-Burgio_Sicily_panorama.jpg',
+    credit: 'Burgio, Sicily · Wikimedia Commons',
+    text: `Burgio sits on the Sicani Mountains, a range named for the Sicani — Sicily's original pre-Greek inhabitants who arrived before 1000 BC. The town itself was established under Arab rule, possibly as early as the 9th century, and its name comes directly from the Arabic "burj" meaning tower or fortress.
+
+The Virgadamo bell foundry has been casting bronze bells continuously since the 16th century, making it the last traditional bell foundry in Sicily and one of only a handful left in all of Italy. The bells cast here hang in churches across Sicily. The ceramic tradition began when potters from Caltagirone — Sicily's most famous ceramic city — relocated here in the 1500s. Burgio's distinctive yellow-green palette on white clay is found nowhere else.`,
+    facts: [
+      ['The bells', 'Virgadamo foundry active since 16th century — only one left in Sicily'],
+      ['Ceramics', 'Yellow-green on white — distinct from all other Sicilian ceramics'],
+      ['The castle', 'Norman, 11th century — walk up for views of the Sicani Mountains'],
+      ['The name', 'From Arabic "burj" — tower. The town\'s layout is still Saracen-era']
+    ],
+    photoSpot: 'The view from the base of Castello di Burgio down through the ceramic-decorated alleys to the mountains beyond. If the bell foundry is open, the bronze casting molds are remarkable to photograph.'
+  },
+  'olivefarm': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Olive_trees_in_Caltabellotta.jpg/640px-Olive_trees_in_Caltabellotta.jpg',
+    credit: 'Caltabellotta · Wikimedia Commons',
+    text: `Caltabellotta rises dramatically at 949 meters above sea level — one of Sicily's most spectacularly sited hill towns, its name from the Arabic "qal'at al-ballūt" meaning "fortress of the oaks." The view from its peak takes in the African coast on clear days.
+
+Sicilian extra virgin olive oil has been produced here for over 2,500 years — ancient Greek settlers brought olive cultivation to Sicily around 600 BC. The harvest happens each October through November, and the oil is cold-pressed within 24 hours of picking to preserve the polyphenols responsible for its bitter, peppery finish that means it's genuinely fresh.`,
+    facts: [
+      ['Altitude', '949m — one of Sicily\'s highest hill towns'],
+      ['Etymology', 'Arabic "qal\'at al-ballūt" — fortress of the oaks'],
+      ['Olive harvest', 'October–November, hand-picked, cold-pressed within 24 hours'],
+      ['The view', 'On clear days, Tunisia and the African coast are visible']
+    ],
+    photoSpot: 'The olive groves with the rocky peak of Caltabellotta behind them — golden light in the afternoon is exceptional here. Ask the guide to point out which direction to look for the African coast view.'
+  },
+  'cefalu': {
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Duomo_di_Cefalù.jpg/640px-Duomo_di_Cefalù.jpg',
+    credit: 'Duomo di Cefalù · Wikimedia Commons',
+    text: `Cefalù's Norman cathedral was begun in 1131 by Roger II — the same king who built the Cappella Palatina in Palermo — reportedly as thanks for surviving a storm at sea. The result is one of the finest examples of Arab-Norman architecture in Sicily, a UNESCO World Heritage Site.
+
+The apse mosaics are among the oldest in Sicily, completed around 1148. The central Christ Pantocrator (Christ as ruler of all) is considered one of the finest Byzantine mosaic images in existence — his face is roughly 2.5 meters tall and rendered with extraordinary psychological intensity. The medieval wash house (lavatoio) at the base of the rock is fed by a 9th-century Arab water channel still running after 1,000 years.`,
+    facts: [
+      ['Cathedral', 'Begun 1131 by Roger II · UNESCO World Heritage Site'],
+      ['Pantocrator', 'Apse mosaic c.1148 — one of the greatest Byzantine images surviving'],
+      ['Lavatoio', 'Medieval washhouse fed by a 1,000-year-old Arab water channel'],
+      ['La Rocca', 'Ancient Greek and Byzantine ruins at the summit — bring good shoes']
+    ],
+    photoSpot: 'The cathedral facade from the piazza at golden hour — the twin towers frame perfectly. For the lavatoio, shoot looking outward through the ancient arches toward the sea.'
+  }
+};
+
+// ══════════════════════════════════════════
+// DATA: Location per day for weather
+// ══════════════════════════════════════════
+const dayData = {
+  'may29': { lat: 41.9779, lon: -87.9045, label: 'Chicago, IL', region: 'travel' },
+  'may30': { lat: 43.4636, lon: 11.8822, label: 'Arezzo, Tuscany', region: 'tuscany' },
+  'may31': { lat: 43.7696, lon: 11.2558, label: 'Florence', region: 'tuscany' },
+  'jun1':  { lat: 43.4636, lon: 11.8822, label: 'Arezzo, Tuscany', region: 'tuscany' },
+  'jun2':  { lat: 43.3183, lon: 11.3308, label: 'Siena / Chianti', region: 'tuscany' },
+  'jun3':  { lat: 41.9028, lon: 12.4964, label: 'Rome', region: 'rome' },
+  'jun4':  { lat: 41.9028, lon: 12.4964, label: 'Rome', region: 'rome' },
+  'jun5':  { lat: 37.9362, lon: 13.5527, label: 'Palermo, Sicily', region: 'sicily' },
+  'jun6':  { lat: 38.1157, lon: 13.3615, label: 'Palermo, Sicily', region: 'sicily' },
+  'jun7':  { lat: 37.6073, lon: 13.2880, label: 'Sicily - Caltabellotta', region: 'sicily' },
+  'jun8':  { lat: 37.9870, lon: 13.8776, label: 'Campofelice, Sicily', region: 'sicily' },
+  'jun9':  { lat: 37.9870, lon: 13.8776, label: 'Campofelice, Sicily', region: 'sicily' },
+};
+
+// ══════════════════════════════════════════
+// WEATHER SYSTEM — hourly morning/afternoon/evening + precip
+// ══════════════════════════════════════════
+
+const DATE_MAP = {
+  'may29':'2026-05-29','may30':'2026-05-30','may31':'2026-05-31',
+  'jun1':'2026-06-01','jun2':'2026-06-02','jun3':'2026-06-03',
+  'jun4':'2026-06-04','jun5':'2026-06-05','jun6':'2026-06-06',
+  'jun7':'2026-06-07','jun8':'2026-06-08','jun9':'2026-06-09'
+};
+
+function tripDateStr(dayId) { return DATE_MAP[dayId]; }
+
+// WMO weather code → emoji + short label
+function wmoIcon(code) {
+  if (code === 0)  return ['☀️','Clear'];
+  if (code <= 2)   return ['🌤️','Partly cloudy'];
+  if (code === 3)  return ['☁️','Overcast'];
+  if (code <= 49)  return ['🌫️','Foggy'];
+  if (code <= 59)  return ['🌦️','Drizzle'];
+  if (code <= 69)  return ['🌧️','Rain'];
+  if (code <= 79)  return ['❄️','Snow'];
+  if (code <= 82)  return ['🌦️','Showers'];
+  if (code <= 99)  return ['⛈️','Storms'];
+  return ['🌡️','—'];
+}
+
+const weatherCache = {};
+
+// Correct timezone per day
+function tzForDay(dayId) {
+  return dayId === 'may29' ? 'America%2FChicago' : 'Europe%2FRome';
+}
+
+async function fetchWeather(dayId) {
+  if (weatherCache[dayId]) return weatherCache[dayId];
+  const d = dayData[dayId];
+  const dateStr = tripDateStr(dayId);
+  if (!d || !dateStr) return null;
+
+  const tz = tzForDay(dayId);
+
+  // Request both daily summary AND hourly for morning(8)/afternoon(14)/evening(20)
+  const url = [
+    'https://api.open-meteo.com/v1/forecast',
+    `?latitude=${d.lat}&longitude=${d.lon}`,
+    `&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max`,
+    `&hourly=temperature_2m,weathercode,precipitation_probability`,
+    `&temperature_unit=fahrenheit`,
+    `&timezone=${tz}`,
+    `&start_date=${dateStr}&end_date=${dateStr}`
+  ].join('');
+
+  try {
+    const r = await fetch(url, { mode: 'cors' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+
+    // Daily summary
+    const max  = Math.round(data.daily.temperature_2m_max[0]);
+    const min  = Math.round(data.daily.temperature_2m_min[0]);
+    const code = data.daily.weathercode[0];
+    const precip = data.daily.precipitation_probability_max[0] ?? 0;
+
+    // Hourly slots — find hour indices for 8, 14, 20 within the returned times
+    const times = data.hourly.time; // ["2026-05-29T00:00", ...]
+    const temps = data.hourly.temperature_2m;
+    const hcodes = data.hourly.weathercode;
+    const hprecip = data.hourly.precipitation_probability;
+
+    function slotAt(hour) {
+      const target = `${dateStr}T${String(hour).padStart(2,'0')}:00`;
+      const idx = times.indexOf(target);
+      if (idx === -1) return null;
+      return {
+        temp: Math.round(temps[idx]),
+        code: hcodes[idx],
+        precip: hprecip[idx] ?? 0
+      };
+    }
+
+    const result = {
+      max, min, code, precip,
+      morning:   slotAt(8),   // 8 AM
+      afternoon: slotAt(14),  // 2 PM
+      evening:   slotAt(20),  // 8 PM
+      label: d.label
+    };
+
+    weatherCache[dayId] = result;
+    return result;
+  } catch(e) {
+    console.warn('Weather fetch failed:', e.message);
+    return null;
+  }
+}
+
+function renderWeatherStrip(w) {
+  const [icon, desc] = wmoIcon(w.code);
+
+  function slot(label, s) {
+    if (!s) return '';
+    const [si] = wmoIcon(s.code);
+    const rain = s.precip > 0 ? `<div class="ws-precip">💧${s.precip}%</div>` : '';
+    return `
+      <div class="ws-slot">
+        <div class="ws-slot-label">${label}</div>
+        <div class="ws-slot-icon">${si}</div>
+        <div class="ws-slot-temp">${s.temp}°</div>
+        ${rain}
+      </div>`;
+  }
+
+  const rainLine = w.precip > 0
+    ? `<div class="dws-precip">💧 ${w.precip}% chance of rain</div>`
+    : `<div class="dws-precip" style="color:var(--sage)">☀️ Low rain chance</div>`;
+
+  return `
+    <div class="dws-top">
+      <div class="dws-icon">${icon}</div>
+      <div class="dws-info">
+        <div class="dws-temp">${w.max}° / ${w.min}°F</div>
+        <div class="dws-desc">${desc} · ${w.label}</div>
+        ${rainLine}
+      </div>
+    </div>
+    <div class="ws-slots">
+      ${slot('Morning', w.morning)}
+      ${slot('Afternoon', w.afternoon)}
+      ${slot('Evening', w.evening)}
+    </div>`;
+}
+
+async function loadWeatherForDay(dayId) {
+  const strip = document.getElementById('weather-' + dayId);
+  if (!strip) return;
+  strip.innerHTML = `<span class="dws-loading">Loading weather…</span>`;
+  const w = await fetchWeather(dayId);
+  if (!w) {
+    strip.innerHTML = `<span class="dws-loading">⚠️ Weather unavailable — check WiFi connection</span>`;
+    return;
+  }
+  strip.innerHTML = renderWeatherStrip(w);
+}
+
+async function loadHeroWeather() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  // Find matching trip day, or use May 30 (first Italy day) as default
+  const matchId = Object.keys(DATE_MAP).find(k => DATE_MAP[k] === todayStr);
+  const dayId = matchId || 'may30';
+  const w = await fetchWeather(dayId);
+  if (w) {
+    const [icon] = wmoIcon(w.code);
+    document.getElementById('hero-weather').textContent = `${icon} ${w.max}°/${w.min}°F`;
+    document.getElementById('hero-weather-loc').textContent = w.label;
+  } else {
+    document.getElementById('hero-weather').textContent = '— Check WiFi';
+    document.getElementById('hero-weather-loc').textContent = 'Weather needs connection';
+  }
+}
+
+// ══════════════════════════════════════════
+// COUNTDOWN
+// ══════════════════════════════════════════
+function updateCountdown() {
+  const now = new Date();
+  const departure = new Date('2026-05-29T15:45:00');
+  const tripEnd = new Date('2026-06-09T13:15:00');
+
+  const elVal = document.getElementById('countdown-val');
+  const elSub = document.getElementById('countdown-sub');
+
+  if (now < departure) {
+    const diff = departure - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hrs = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    if (days > 0) {
+      elVal.textContent = `${days}d ${hrs}h`;
+      elSub.textContent = 'until departure';
+    } else {
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      elVal.textContent = `${hrs}h ${mins}m`;
+      elSub.textContent = 'until departure!';
+    }
+  } else if (now >= departure && now <= tripEnd) {
+    elVal.textContent = '🇮🇹 In Italy!';
+    const diff = tripEnd - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    elSub.textContent = `${days} days remaining`;
+  } else {
+    elVal.textContent = 'Trip Complete';
+    elSub.textContent = 'Arrivederci! 🤌';
+  }
+}
+
+// ══════════════════════════════════════════
+// TODAY HIGHLIGHT
+// ══════════════════════════════════════════
+function highlightToday() {
+  const dateMap = {
+    '2026-05-29': 'may29', '2026-05-30': 'may30', '2026-05-31': 'may31',
+    '2026-06-01': 'jun1', '2026-06-02': 'jun2', '2026-06-03': 'jun3',
+    '2026-06-04': 'jun4', '2026-06-05': 'jun5', '2026-06-06': 'jun6',
+    '2026-06-07': 'jun7', '2026-06-08': 'jun8', '2026-06-09': 'jun9'
+  };
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayId = dateMap[todayStr];
+
+  if (todayId) {
+    // Mark tab
+    document.querySelectorAll('.nav-tab[data-date]').forEach(tab => {
+      if (tab.dataset.date === todayStr) tab.classList.add('today');
+    });
+    // Banner
+    const banner = document.getElementById('today-banner');
+    banner.classList.add('show');
+
+    // Day names
+    const dayNames = {
+      'may29': 'Friday May 29 — Departure Day ✈️',
+      'may30': 'Saturday May 30 — Arriving in Tuscany 🇮🇹',
+      'may31': 'Sunday May 31 — Florence Day Trip',
+      'jun1': 'Monday June 1 — Day at the Villa + Cooking Class',
+      'jun2': 'Tuesday June 2 — Siena + Wine Tasting',
+      'jun3': 'Wednesday June 3 — Rome! Golf Cart Tour Tonight',
+      'jun4': 'Thursday June 4 — Vatican Day',
+      'jun5': 'Friday June 5 — Flying to Sicily 🌊',
+      'jun6': 'Saturday June 6 — Palermo Day Trip',
+      'jun7': 'Sunday June 7 — Sicilian Countryside + Burgio',
+      'jun8': 'Monday June 8 — Last Full Day at Resort',
+      'jun9': 'Tuesday June 9 — Heading Home 🏠'
+    };
+    banner.textContent = `TODAY · ${dayNames[todayId] || todayId}`;
+
+    // Auto-open today's tab
+    const todayTab = document.querySelector(`.nav-tab[data-date="${todayStr}"]`);
+    if (todayTab) todayTab.click();
+  }
+}
+
+// ══════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════
+let currentDay = null;
+
+function showDay(id, tabEl) {
+  if (currentDay === id) return;
+  currentDay = id;
+
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  if (tabEl) {
+    tabEl.classList.add('active');
+    tabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Load weather for this day
+  if (id !== 'info') loadWeatherForDay(id);
+}
+
+// ══════════════════════════════════════════
+// CARD TOGGLE
+// ══════════════════════════════════════════
+function toggleCard(headEl) {
+  const card = headEl.closest('.card');
+  card.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// PHRASE COPY
+// ══════════════════════════════════════════
+function copyPhrase(text, el) {
+  navigator.clipboard.writeText(text).catch(() => {});
+  el.classList.add('copied');
+  el.querySelector('.phrase-copy').textContent = '✓';
+  setTimeout(() => {
+    el.classList.remove('copied');
+    el.querySelector('.phrase-copy').textContent = '📋';
+  }, 1500);
+}
+
+// ══════════════════════════════════════════
+// CHECKLIST (localStorage)
+// ══════════════════════════════════════════
+function toggleCheck(li, key) {
+  li.classList.toggle('done');
+  const checks = JSON.parse(localStorage.getItem('italia-checks') || '{}');
+  checks[key] = li.classList.contains('done');
+  localStorage.setItem('italia-checks', JSON.stringify(checks));
+}
+
+function restoreChecklist() {
+  try {
+    const checks = JSON.parse(localStorage.getItem('italia-checks') || '{}');
+    document.querySelectorAll('#checklist li').forEach(li => {
+      const fn = li.getAttribute('onclick');
+      const keyMatch = fn && fn.match(/'([^']+)'\)/);
+      if (keyMatch && checks[keyMatch[1]]) li.classList.add('done');
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// DEEP INFO — inject into card bodies
+// ══════════════════════════════════════════
+function injectDeepInfo() {
+  Object.entries(DEEP_INFO).forEach(([cardId, info]) => {
+    const cardBody = document.querySelector(`#c-${cardId} .card-body`);
+    if (!cardBody) return;
+
+    const uid = `deep-${cardId}`;
+
+    // Photo spot nudge (always visible when card is open)
+    if (info.photoSpot) {
+      const nudge = document.createElement('div');
+      nudge.className = 'photo-nudge';
+      nudge.innerHTML = `<div class="pn-icon">📸</div><div class="pn-text"><strong>Photo spot:</strong> ${info.photoSpot}</div>`;
+      cardBody.appendChild(nudge);
+    }
+
+    // Deep toggle button
+    const toggle = document.createElement('button');
+    toggle.className = 'deep-toggle';
+    toggle.innerHTML = `<span class="dt-icon">📖</span> Read more about this place <span class="dt-chevron">▶</span>`;
+    toggle.onclick = () => toggleDeep(uid, toggle);
+    cardBody.appendChild(toggle);
+
+    // Deep panel
+    const panel = document.createElement('div');
+    panel.className = 'deep-panel';
+    panel.id = uid;
+
+    let factsHTML = '';
+    if (info.facts && info.facts.length) {
+      factsHTML = `<div class="deep-facts">${info.facts.map(([l,v]) =>
+        `<div class="deep-fact"><span class="df-label">${l}</span><span>${v}</span></div>`
+      ).join('')}</div>`;
+    }
+
+    const imgHTML = info.photo
+      ? `<img class="deep-image" src="${info.photo}" alt="" loading="lazy" onerror="this.style.display='none'">
+         <div class="deep-image-credit">${info.credit || ''}</div>`
+      : '';
+
+    const paragraphs = info.text.split('\n\n').filter(Boolean)
+      .map(p => `<p>${p.trim()}</p>`).join('');
+
+    panel.innerHTML = `${imgHTML}<div class="deep-text">${paragraphs}</div>${factsHTML}`;
+    cardBody.appendChild(panel);
+
+    // Add diary section to every card body
+    addDiarySection(cardBody, cardId);
+  });
+
+  // Add diary to cards that don't have deep info too
+  const allCardBodies = document.querySelectorAll('.card-body');
+  allCardBodies.forEach(body => {
+    const card = body.closest('.card');
+    if (!card || body.querySelector('.diary-section')) return;
+    const cardId = card.id ? card.id.replace('c-','') : null;
+    if (cardId) addDiarySection(body, cardId);
+  });
+}
+
+function toggleDeep(uid, toggleEl) {
+  const panel = document.getElementById(uid);
+  if (!panel) return;
+  panel.classList.toggle('open');
+  toggleEl.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// DIARY SYSTEM
+// ══════════════════════════════════════════
+function getDiary() {
+  try { return JSON.parse(localStorage.getItem('italia-diary') || '{}'); }
+  catch(e) { return {}; }
+}
+
+function saveDiary(diary) {
+  localStorage.setItem('italia-diary', JSON.stringify(diary));
+  updateDownloadBtn();
+}
+
+function addDiarySection(cardBody, cardId) {
+  if (cardBody.querySelector('.diary-section')) return;
+
+  const section = document.createElement('div');
+  section.className = 'diary-section';
+  section.id = `diary-section-${cardId}`;
+
+  section.innerHTML = `
+    <div class="diary-head">✏️ Your Moment</div>
+    <div class="diary-entries" id="diary-entries-${cardId}"></div>
+    <div class="diary-add-area">
+      <div class="diary-name-row">
+        <input class="diary-input diary-name-input" id="diary-name-${cardId}" placeholder="Your name" type="text" autocomplete="off">
+        <input class="diary-input" id="diary-note-${cardId}" placeholder="Add a note about this place…" type="text" autocomplete="off">
+      </div>
+      <div class="diary-photo-preview" id="diary-preview-${cardId}">
+        <img id="diary-preview-img-${cardId}" src="" alt="">
+        <button class="diary-photo-clear" onclick="clearPhoto('${cardId}')">✕</button>
+      </div>
+      <div class="diary-actions">
+        <button class="diary-photo-btn" onclick="document.getElementById('diary-photo-input-${cardId}').click()">
+          📷 Photo
+        </button>
+        <input type="file" accept="image/*" capture="environment"
+          id="diary-photo-input-${cardId}"
+          class="diary-photo-input"
+          onchange="previewPhoto('${cardId}', this)">
+        <button class="diary-save-btn" onclick="saveMoment('${cardId}')">Save Moment</button>
+      </div>
+    </div>`;
+
+  cardBody.appendChild(section);
+  renderDiaryEntries(cardId);
+}
+
+let pendingPhotos = {}; // cardId → base64
+
+function previewPhoto(cardId, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  // Compress before storing
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.7);
+      pendingPhotos[cardId] = compressed;
+      const preview = document.getElementById(`diary-preview-${cardId}`);
+      const previewImg = document.getElementById(`diary-preview-img-${cardId}`);
+      previewImg.src = compressed;
+      preview.style.display = 'block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPhoto(cardId) {
+  delete pendingPhotos[cardId];
+  const preview = document.getElementById(`diary-preview-${cardId}`);
+  if (preview) preview.style.display = 'none';
+  const input = document.getElementById(`diary-photo-input-${cardId}`);
+  if (input) input.value = '';
+}
+
+function saveMoment(cardId) {
+  const nameEl = document.getElementById(`diary-name-${cardId}`);
+  const noteEl = document.getElementById(`diary-note-${cardId}`);
+  const name = (nameEl?.value || '').trim();
+  const note = (noteEl?.value || '').trim();
+  const photo = pendingPhotos[cardId] || null;
+
+  if (!name && !note && !photo) return;
+
+  const diary = getDiary();
+  if (!diary[cardId]) diary[cardId] = [];
+  diary[cardId].push({
+    id: Date.now(),
+    name: name || 'Anonymous',
+    note,
+    photo,
+    ts: new Date().toISOString()
+  });
+  saveDiary(diary);
+
+  // Clear inputs
+  if (nameEl) nameEl.value = '';
+  if (noteEl) noteEl.value = '';
+  clearPhoto(cardId);
+  renderDiaryEntries(cardId);
+
+  // Quick feedback
+  const btn = document.querySelector(`#diary-section-${cardId} .diary-save-btn`);
+  if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = 'Save Moment'; }, 1500); }
+}
+
+function deleteMoment(cardId, momentId) {
+  const diary = getDiary();
+  if (!diary[cardId]) return;
+  diary[cardId] = diary[cardId].filter(m => m.id !== momentId);
+  if (!diary[cardId].length) delete diary[cardId];
+  saveDiary(diary);
+  renderDiaryEntries(cardId);
+}
+
+function renderDiaryEntries(cardId) {
+  const container = document.getElementById(`diary-entries-${cardId}`);
+  if (!container) return;
+  const diary = getDiary();
+  const entries = diary[cardId] || [];
+  container.innerHTML = entries.map(e => `
+    <div class="diary-entry">
+      <div class="diary-entry-header">
+        <span class="de-who">${e.name}</span>
+        <span>${new Date(e.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+        <button class="diary-entry-delete" onclick="deleteMoment('${cardId}', ${e.id})">🗑</button>
+      </div>
+      <div class="diary-entry-body">
+        ${e.note ? `<div class="diary-entry-note">${e.note}</div>` : ''}
+        ${e.photo ? `<img class="diary-entry-photo" src="${e.photo}" alt="">` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function updateDownloadBtn() {
+  const diary = getDiary();
+  const totalMoments = Object.values(diary).reduce((s, a) => s + a.length, 0);
+  const btn = document.getElementById('download-trip-btn');
+  if (!btn) return;
+  if (totalMoments > 0) {
+    btn.className = 'has-entries';
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════
+function openDownloadModal() {
+  const diary = getDiary();
+  const allMoments = Object.values(diary).flat();
+  const photos = allMoments.filter(m => m.photo);
+  const days = new Set(Object.keys(diary)).size;
+
+  document.getElementById('stat-moments').textContent = allMoments.length;
+  document.getElementById('stat-photos').textContent = photos.length;
+  document.getElementById('stat-days').textContent = days;
+
+  document.getElementById('download-modal').classList.add('open');
+}
+
+function openCompilerModal() {
+  document.getElementById('compiler-modal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// MEMORY BOOK GENERATOR
+// ══════════════════════════════════════════
+
+// Card ID → human readable place name and day
+const CARD_LABELS = {
+  'land':'FCO · Arrival','transfer1':'FCO → Arezzo Transfer','villalta':'Villalta Villa, Arezzo',
+  'chef1':'Private Chef Dinner at Villa','vanflorence':'Drive to Florence','pitti':'Pitti Palace & Boboli Gardens, Florence',
+  'sandwiches':'Via dei Neri, Florence','flourtour':'Florence Highlights Tour','returnvilla':'Return to Villa',
+  'porcavacca':'Osteria Porcavacca, Arezzo','villaday':'Day at the Villa','cooking':'Cooking Class with Chef Paola',
+  'vansiena':'Drive to Siena','siena':'Siena Walking Tour','winery':'Podere La Marronaia Winery',
+  'castellina':'Castellina in Chianti','villacheckout':'Villa Checkout','smeraldo':'Hotel Smeraldo, Rome',
+  'golfcart':'Rome Golf Cart Tour','mimiecoco':'Mimi e Coco, Rome','morningrome':'Morning in Rome',
+  'vaticantransfer':'Transfer to Vatican','vatican':'Vatican, Sistine Chapel & St. Peter\'s','tulipano':'Il Tulipano Nero, Rome',
+  'fco-transfer':'Transfer to FCO','ita-flight':'FCO → Palermo Flight','pmo-transfer':'PMO Transfer',
+  'palladium':'Grand Palladium Resort, Sicily','palermovan':'Drive to Palermo','palazzo':'Palazzo dei Normanni, Palermo',
+  'palermotour':'Palermo Walking Tour','tara':'Tara Bottega e Cucina, Palermo','returnresort':'Return to Resort',
+  'chrisemily':'Chris & Emily Departure','countryside':'Sicilian Countryside Day','olivefarm':'Olive Farm, Caltabellotta',
+  'burgio':'Burgio Village','resortday':'Resort Day','cefalu':'Cefalù','hikes':'Hiking near Campofelice',
+  'restaurants8':'Sicily Restaurants','dep-transfer':'Transfer to PMO','dep-pmo':'PMO → FCO Flight','dep-ord':'FCO → ORD Flight Home'
+};
+
+const DAY_LABELS = {
+  'may29':'Friday, May 29 — Departure','may30':'Saturday, May 30 — Arrive Italy',
+  'may31':'Sunday, May 31 — Florence','jun1':'Monday, June 1 — Villa Day',
+  'jun2':'Tuesday, June 2 — Siena + Wine','jun3':'Wednesday, June 3 — Rome Arrives',
+  'jun4':'Thursday, June 4 — Vatican','jun5':'Friday, June 5 — Sicily',
+  'jun6':'Saturday, June 6 — Palermo','jun7':'Sunday, June 7 — Sicilian Countryside',
+  'jun8':'Monday, June 8 — Last Resort Day','jun9':'Tuesday, June 9 — Home'
+};
+
+// Which card belongs to which day
+const CARD_DAY = {
+  'land':'may30','transfer1':'may30','villalta':'may30','chef1':'may30',
+  'vanflorence':'may31','pitti':'may31','sandwiches':'may31','flourtour':'may31','returnvilla':'may31','porcavacca':'may31',
+  'villaday':'jun1','cooking':'jun1',
+  'vansiena':'jun2','siena':'jun2','winery':'jun2','castellina':'jun2',
+  'villacheckout':'jun3','smeraldo':'jun3','golfcart':'jun3','mimiecoco':'jun3',
+  'morningrome':'jun4','vaticantransfer':'jun4','vatican':'jun4','tulipano':'jun4',
+  'fco-transfer':'jun5','ita-flight':'jun5','pmo-transfer':'jun5','palladium':'jun5',
+  'palermovan':'jun6','palazzo':'jun6','palermotour':'jun6','tara':'jun6','returnresort':'jun6',
+  'chrisemily':'jun7','countryside':'jun7','olivefarm':'jun7','burgio':'jun7',
+  'resortday':'jun8','cefalu':'jun8','hikes':'jun8','restaurants8':'jun8',
+  'dep-transfer':'jun9','dep-pmo':'jun9','dep-ord':'jun9'
+};
+
+function downloadMemoryBook() {
+  const diary = getDiary();
+  generateMemoryBookHTML(diary, 'Piazza Family Italia 2026 — My Memories');
+}
+
+function generateMemoryBookHTML(diary, title) {
+  // Group by day
+  const byDay = {};
+  Object.entries(diary).forEach(([cardId, moments]) => {
+    const day = CARD_DAY[cardId] || 'other';
+    if (!byDay[day]) byDay[day] = [];
+    moments.forEach(m => byDay[day].push({ ...m, place: CARD_LABELS[cardId] || cardId }));
+  });
+
+  const dayOrder = ['may29','may30','may31','jun1','jun2','jun3','jun4','jun5','jun6','jun7','jun8','jun9','other'];
+  const totalMoments = Object.values(diary).flat().length;
+  const totalPhotos = Object.values(diary).flat().filter(m => m.photo).length;
+
+  let daysHTML = '';
+  dayOrder.forEach(dayId => {
+    if (!byDay[dayId]) return;
+    const moments = byDay[dayId];
+    const dayLabel = DAY_LABELS[dayId] || dayId;
+
+    // Group moments by place within day
+    const byPlace = {};
+    moments.forEach(m => {
+      if (!byPlace[m.place]) byPlace[m.place] = [];
+      byPlace[m.place].push(m);
+    });
+
+    let placesHTML = Object.entries(byPlace).map(([place, ms]) => `
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#b8924a;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e8e2d8">${place}</div>
+        ${ms.map(m => `
+          <div style="margin-bottom:14px;padding:12px 14px;background:white;border-radius:8px;border:1px solid #e8e2d8">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:#6b5e4e;margin-bottom:8px">
+              <strong style="color:#3d3328">${m.name}</strong>
+              <span>${new Date(m.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+            </div>
+            ${m.note ? `<div style="font-size:14px;color:#3d3328;line-height:1.6;margin-bottom:8px">${m.note}</div>` : ''}
+            ${m.photo ? `<img src="${m.photo}" style="width:100%;border-radius:6px;max-height:280px;object-fit:cover;display:block">` : ''}
+          </div>`).join('')}
+      </div>`).join('');
+
+    daysHTML += `
+      <div style="margin-bottom:36px">
+        <div style="background:#1a1510;padding:16px 20px;border-radius:10px;margin-bottom:16px">
+          <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#b8924a;margin-bottom:4px">Day ${dayOrder.indexOf(dayId)+1}</div>
+          <div style="font-family:Georgia,serif;font-size:1.3rem;font-weight:300;color:#f5f0e8">${dayLabel}</div>
+        </div>
+        ${placesHTML}
+      </div>`;
+  });
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<style>
+  body{font-family:'Georgia',serif;background:#f5f0e8;color:#1a1510;margin:0;padding:0}
+  .cover{background:#1a1510;padding:60px 30px;text-align:center;min-height:220px;display:flex;flex-direction:column;justify-content:center}
+  .cover-eyebrow{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#b8924a;margin-bottom:12px;font-family:sans-serif}
+  .cover-title{font-size:2.8rem;font-weight:300;color:#f5f0e8;line-height:1.1;margin-bottom:8px}
+  .cover-title em{font-style:italic;color:#e8835a}
+  .cover-stripe{height:3px;background:linear-gradient(90deg,#c4622d,#b8924a,#7a8c6e)}
+  .cover-stats{display:flex;justify-content:center;gap:32px;padding:20px;background:#2d2218}
+  .stat{text-align:center}.stat .sv{font-size:1.8rem;font-weight:300;color:#f5f0e8;font-family:sans-serif}
+  .stat .sl{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#b8924a;font-family:sans-serif}
+  .content{max-width:680px;margin:0 auto;padding:30px 20px 60px}
+  @media print{.cover{min-height:300px}.content{padding:20px}}
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="cover-eyebrow">Vero Viaggio · May 29 – June 9, 2026</div>
+  <div class="cover-title">Piazza Family<br><em>Italia 2026</em></div>
+</div>
+<div class="cover-stripe"></div>
+<div class="cover-stats">
+  <div class="stat"><div class="sv">${totalMoments}</div><div class="sl">Moments</div></div>
+  <div class="stat"><div class="sv">${totalPhotos}</div><div class="sl">Photos</div></div>
+  <div class="stat"><div class="sv">${Object.keys(byDay).length}</div><div class="sl">Days</div></div>
+  <div class="stat"><div class="sv">13</div><div class="sl">Travelers</div></div>
+</div>
+<div class="content">${daysHTML}</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title.replace(/[^a-z0-9]/gi,'_')}.html`;
+  a.click();
+  closeModal('download-modal');
+}
+
+// ══════════════════════════════════════════
+// EXPORT RAW DATA (for compiler)
+// ══════════════════════════════════════════
+function exportDiaryData() {
+  const diary = getDiary();
+  const name = prompt('Your name (for the family compiler):') || 'Family Member';
+  const data = { name, exportedAt: new Date().toISOString(), diary };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `italia2026-${name.replace(/\s+/g,'_')}.json`;
+  a.click();
+}
+
+// ══════════════════════════════════════════
+// COMPILER
+// ══════════════════════════════════════════
+let compilerFiles = []; // { name, data }
+
+function loadCompilerFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      compilerFiles.push({ name: data.name || file.name, data });
+      renderCompilerFiles();
+    } catch(err) {
+      alert('Could not read that file. Make sure it\'s an exported diary JSON.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function renderCompilerFiles() {
+  const container = document.getElementById('compiler-files');
+  const mergeBtn = document.getElementById('compiler-merge-btn');
+  container.innerHTML = compilerFiles.map((f, i) => `
+    <div class="compiler-file">
+      <span>📁</span>
+      <span>${f.name}</span>
+      <span style="margin-left:4px;font-size:10px;color:#6b5e4e">(${Object.values(f.data.diary||{}).flat().length} moments)</span>
+      <button class="compiler-file-remove" onclick="removeCompilerFile(${i})">✕</button>
+    </div>`).join('');
+  if (mergeBtn) mergeBtn.style.display = compilerFiles.length >= 1 ? 'flex' : 'none';
+}
+
+function removeCompilerFile(i) {
+  compilerFiles.splice(i, 1);
+  renderCompilerFiles();
+}
+
+function mergeAndDownload() {
+  // Merge all diaries — combine entries per card
+  const merged = {};
+  compilerFiles.forEach(f => {
+    const diary = f.data.diary || {};
+    Object.entries(diary).forEach(([cardId, moments]) => {
+      if (!merged[cardId]) merged[cardId] = [];
+      merged[cardId].push(...moments);
+    });
+  });
+
+  // Sort each card's moments by timestamp
+  Object.keys(merged).forEach(k => {
+    merged[k].sort((a,b) => new Date(a.ts) - new Date(b.ts));
+  });
+
+  const names = compilerFiles.map(f => f.name).join(', ');
+  generateMemoryBookHTML(merged, `Piazza Family Italia 2026 — ${names}`);
+}
+
+// ══════════════════════════════════════════
+// PWA INSTALL
+// ══════════════════════════════════════════
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('install-dismissed')) {
+    document.getElementById('install-banner').classList.add('show');
+  }
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      document.getElementById('install-banner').classList.remove('show');
+    });
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem('install-dismissed', '1');
+}
+
+// ══════════════════════════════════════════
+// OFFLINE DETECTION
+// ══════════════════════════════════════════
+function updateOnlineStatus() {
+  const badge = document.getElementById('offline-badge');
+  if (!navigator.onLine) badge.classList.add('show');
+  else badge.classList.remove('show');
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+// ══════════════════════════════════════════
+// SERVICE WORKER
+// ══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+  loadHeroWeather();
+  highlightToday();
+  restoreChecklist();
+  injectDeepInfo();
+  updateDownloadBtn();
+
+  // Default to May 29 if today isn't a trip day
+  if (!currentDay) {
+    const firstTab = document.querySelector('.nav-tab[data-date]');
+    if (firstTab) firstTab.click();
+  }
+});
+</script>
+</body>
+</html>
