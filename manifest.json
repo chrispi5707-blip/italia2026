@@ -1,0 +1,17 @@
+{
+  "name": "Piazza Family · Italia 2026",
+  "short_name": "Italia 2026",
+  "description": "Piazza Family Italy Trip Guide",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1510",
+  "theme_color": "#c4622d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%231a1510'/><text y='130' x='20' font-size='120'>🇮🇹</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
